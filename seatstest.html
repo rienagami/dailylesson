@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>平面オブジェクト</title>
+    <script src="js/three.js_r75/build/three.js"></script>
+    <script src="js/three.js_r75/examples/js/controls/TrackballControls.js"></script>
+    <style>
+        /*  ↓↓↓↓↓↓↓↓↓これを消したら表示全部消えた  ↓↓↓↓↓↓↓↓↓*/
+
+        * {
+            padding: 0px;
+            margin: 0px
+        }
+
+        div#canvas-frame {
+            width: 1200px;
+            height: 700px;
+            overflow: hidden;
+        }
+    </style>
+    <script>
+        window.addEventListener("load", function() {
+            threeStart();
+        });
+
+        function threeStart() {
+            initThree(); //Three.js初期化関数の実行
+            initObject(); //オブジェクト初期化関数の実行
+            initCamera();
+            loop();
+        }
+
+        //レンダラーオブジェクト、シーンオブジェクト、キャンバスフレームのDOM要素
+        var renderer, scene, canvasFrame;
+
+        function initThree() {
+            canvasFrame = document.getElementById('canvas-frame');
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+            if (!renderer) alert('Three.jsの初期化に失敗しました。');
+            //レンダラーのサイズ設定
+            renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+            //キャンバスフレームDOM要素にcanvas要素を追加
+            canvasFrame.appendChild(renderer.domElement);
+            //レンダラークリアカラーの設定
+            renderer.setClearColor(0xEEEEEE, 1.0);
+            //シーンオブジェクトの生成
+            scene = new THREE.Scene();
+            scene.add(makeChair(10, 5, 0));
+
+
+
+        }
+
+        ////////////////////////////////////////////
+        //カメラ初期化関数の定義
+        ////////////////////////////////////////////
+        //グローバル変数の宣言
+
+        var camera; //カメラオブジェクト
+
+        function initCamera() {
+            //カメラオブジェクトの生成
+            camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+
+
+            //カメラの位置の設定
+            camera.position.set(10, 30, 100);
+            //カメラの上ベクトルの設定
+            //camera.up.set(0, 0, 1);
+            //カメラの中心位置ベクトルの設定
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+
+            });
+
+            //トラックボールオブジェクトの生成
+            trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+            //トラックボール動作範囲のサイズとオフセットの設定
+            //横幅
+            trackball.screen.width = canvasFrame.clientWidth;
+
+            //縦幅
+            trackball.screen.height = canvasFrame.clienHeight;
+
+            trackball.screen.offsetLeft = canvasFrame.getBoundingClientRect().left;
+            trackball.screen.offsetTop = canvasFrame.getBoundingClientRect().top;
+
+
+            //トラックボールの回転無効化と回転速度の決定
+            trackball.noZoom = false;
+            trackball.zoomSpeed = 4.0;
+
+            //トラックボールのカメラ中心移動の無効化と中心速度の設定
+            trackball.noPan = false;
+            trackball.panSpeed = 1.0;
+            trackball.target = new THREE.Vector3(0, 0, 0);
+
+            //トラックボールのスタティックムーブの有効化
+            trackball.staticMoving = true;
+            //トラックボールのダイナミックムーブ時の減衰定数
+            trackball.dynamicDampingFactor = 0.3;
+        }
+
+        //オブジェクト初期化関数の定義
+
+        var axis; //軸オブジェクト
+
+        function initObject() {
+            //軸オブジェクトの生成
+            axis = new THREE.AxisHelper(100);
+            //軸オブジェクトのシーンへの追加
+            scene.add(axis);
+            //軸オブジェクトの位置座標を設定
+            axis.position.set(0, 0, 0);
+        }
+
+        var step = 0; //ステップ数
+        function loop() {
+            //トラックボールによる
+            //カメラオブジェクトのプロパティの更新
+            trackball.update();
+
+            //ステップ数のインクリメント
+            step++;
+
+            //レンダリング
+
+            renderer.render(scene, camera);
+
+            //画像生成
+            makePicture();
+
+            //「loop()」関数の呼び出し
+            requestAnimationFrame(loop);
+        }
+
+        //画像作成用
+        var makePictureFlag = false;
+
+
+        //画像制作イベント
+        window.addEventListener('keydown', function(e) {
+
+            var keyChar = String.fromCharCode(e.keyCode).toLowerCase();
+
+            //キーボードイベント時のキー取得
+            var keyChar = String.fromCharCode(e.keyCode).toLowerCase();
+
+            //キーボードの「s」が押された場合
+            if (keyChar == "s") {
+                makePictureFlag = true;
+            }
+        });
+
+        //画像作成関数
+        function makePicture() {
+            if (!makePictureFlag) return;
+            //グラフィクスが描写されたcanvas要素
+            var canvas = renderer.domElement;
+
+            //a要素の生成
+            var a = document.createElement("a");
+            //canvas要素→DataURL形式
+            a.href = canvas.toDataURL("image/png");
+            //PNGファイル名の命名
+            a.download = "picture";
+            a.innerHTML = "ダウンロード";
+
+            //id="thumbnails"のdiv要素の子要素にa要素を追加
+            document.getElementByName("body")[0].appendChild(a);
+
+            makePictureFlag = false;
+        }
+
+        function makeSeat(width, height, depth) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            return seat;
+
+        }
+
+        function makeBack(width, height, depth, y, z) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            seat.position.set(0, y, z);
+            return seat;
+
+        }
+
+
+        function makeChair(x, y, z) {
+            var chairGroup = new THREE.Group();
+            chairGroup.add(makeSeat(30, 5, 30));
+            chairGroup.add(makeBack(30, 30, 5, 12.5, -15));
+            chairGroup.position.set(x, y, z);
+            return chairGroup;
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <div id="canvas-frame"></div>
+
+</body>
+</html>
