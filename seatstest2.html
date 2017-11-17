@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>椅子を作る！</title>
+    <script src="js/three.js_r75/build/three.js"></script>
+    <script src="js/three.js_r75/examples/js/controls/TrackballControls.js"></script>
+    <style>
+        /*  ↓↓↓↓↓↓↓↓↓これを消したら表示全部消えた  ↓↓↓↓↓↓↓↓↓*/
+
+        * {
+            padding: 0px;
+            margin: 0px
+        }
+
+        div#canvas-frame {
+            width: 1200px;
+            height: 700px;
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+        //windowイベントの定義
+        window.addEventListener("load", function() {
+            threeStart(); //Three.jsのスタート関数の実行
+        });
+
+
+        //Three.jsスタート関数の定義
+        //Three.jsスタートの宣言
+        function threeStart() {
+            initThree();
+            initObject();
+            initCamera();
+            loop();
+        }
+
+        //Three.js初期化関数の定義
+        var renderer,
+            scene,
+            canvasFrame;
+
+        function initThree() {
+            //キャンバスフレームDOM要素の取得
+            canvasFrame = document.getElementById('canvas-frame');
+            //レンダラーオブジェクトの生成
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+
+            if (!renderer) alert('Three.jsの初期化に失敗しました。');
+
+            renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+            //キャンバスフレームDOM要素にcanvas要素を追加
+            canvasFrame.appendChild(renderer.domElement);
+
+            //レンダラークリアカラーの設定
+            renderer.setClearColor(0xEEEEEE, 1.0);
+
+            //シーンオブジェクトの生成
+            scene = new THREE.Scene();
+            for (var i = 0; i < 10; i += 1) {
+                scene.add(makeChair(10 + 40 * i, 0, 0));
+            }
+        }
+
+        //カメラ初期化関数の定義
+        var camera;
+
+        function initCamera() {
+            camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+
+            //カメラの位置の設定
+            camera.position.set(10, 30, 100);
+            //カメラの上ベクトルの設定
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+
+            });
+
+            trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+            //トラックボール動作範囲のサイズとオフセットの設定
+
+            //横幅
+            trackball.screen.width = canvasFrame.clientWidth;
+
+            //縦幅
+            trackball.screen.height = canvasFrame.clientHeight;
+
+            trackball.screen.offsetLeft = canvasFrame.getBoundingClientRect().left;
+            trackball.screen.offsetTop = canvasFrame.getBoundingClientRect().top;
+
+            //トラックボールの回転無効化と回転速度の決定
+            trackball.noZoom = false;
+            trackball.zoomSpeed = 4.0;
+
+            //トラックボールのカメラ中心移動の無効化と中心速度の設定
+            trackball.noPan = false;
+            trackball.panSpeed = 1.0;
+            trackball.target = new THREE.Vector3(0, 0, 0);
+
+            //トラックボールのスタティックムーブの有効化
+            trackball.staticMoving = true;
+            //トラックボールのダイナミックムーブ時の減衰定数
+            trackball.dynamicDampingFactor = 0.3;
+        }
+
+
+
+        //オブジェクト初期化関数の定義
+
+        var axis; //軸オブジェクト
+
+        function initObject() {
+            axis = new THREE.AxisHelper(100);
+            scene.add(axis);
+            axis.position.set(0, 0, 0);
+        }
+
+
+        //無限ループ関数の定義
+        var step = 0; //ステップ数
+        function loop() {
+            trackball.update();
+            step++;
+            renderer.render(scene, camera);
+            makePicture();
+            requestAnimationFrame(loop);
+        }
+        
+        //画像作成用
+        var makePictureFlag = false;
+        
+        //画像作成イベント
+        window.addEventListener('keydown',function(e){
+            
+            var keychar = String.fromCharCode(e.keyCode).toLowerCase();
+            
+            var keyChar = String.fromCharCode(e.keyCode).toLowerCase();
+            
+            if (keychar == "s"){
+                makePictureFrag = true;
+            }
+
+        });
+        
+       //画像作成関数
+        function makePicture(){
+            if(!makePictureFlag) return;
+            var canvas = renderer.domElement;
+            
+            var a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "picture";
+            a.innerHTML = "ダウンロード";
+            
+            document.getElementsByName("body")[0].appendChild(a);
+            
+            makePictureFlag = false;
+        }
+        
+        
+        function makeSeat(width, height,depth){
+            var geometry = new THREE.BoxGeometry(width,height,depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            return seat;
+        }
+        
+        
+        function makeBack(width, height, depth, y ,z){
+            var geometry = new THREE.BoxGeometry(Width,height,depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry,material);
+            seat.position.set(0,y,z);
+            return seat;
+        }
+        
+        
+        function makeChair(x,y,z){
+            var chairGroup = new THREE.Group();
+            chairGroup.add(makeSeat(30,5,30));
+            chairGroup.add(makeBack(30,30,5,10,10));
+            chairGroup.position.set(x,y,z);
+            return chairGroup;
+        }
+
+    </script>
+
+
+
+
+
+
+
+
+
+</head>
+
+<body>
+    <div id="canvas-frame"></div>
+</body>
+</html>
