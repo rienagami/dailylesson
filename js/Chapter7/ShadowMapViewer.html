@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>平行光源によるシャドーマップ可視化オブジェクト</title>
+<script src="../three.js_r75/build/three.js"></script>  <!-- Three.js用ライブラリ -->
+<script src="../three.js_r75/examples/js/controls/TrackballControls.js"></script> <!-- トラックボール用ライブラリ -->
+
+<script src="../three.js_r75/examples/js/shaders/UnpackDepthRGBAShader.js"></script>
+<script src="../three.js_r75/examples/js/utils/ShadowMapViewer.js"></script>
+<style>
+*{padding:0px; margin:0px}
+div#canvas-frame{
+	width: 500px;  /* 横幅 */
+	height: 500px; /* 縦幅 */
+	overflow:hidden;
+}
+</style>
+<script>
+////////////////////////////////////////////////////////////////////
+// windowイベントの定義
+////////////////////////////////////////////////////////////////////
+window.addEventListener("load", function () {
+	threeStart(); //Three.jsのスタート関数の実行
+});
+////////////////////////////////////////////////////////////////////
+// Three.jsスタート関数の定義
+////////////////////////////////////////////////////////////////////
+function threeStart() {
+	initThree();  //Three.js初期化関数の実行
+	initLight();  //光源初期化関数の実行
+	initObject(); //オブジェクト初期化関数の実行
+	initCamera(); //カメラ初期化関数の実行
+	loop();       //無限ループ関数の実行
+}
+////////////////////////////////////////////////////////////////////
+// Three.js初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var renderer,    //レンダラーオブジェクト
+    scene,       //シーンオブジェクト
+    canvasFrame; //キャンバスフレームのDOM要素
+function initThree() {
+	//キャンバスフレームDOM要素の取得
+	canvasFrame = document.getElementById('canvas-frame');
+	//レンダラーオブジェクトの生成
+	renderer = new THREE.WebGLRenderer({ antialias: true });
+
+	if (!renderer) alert('Three.js の初期化に失敗しました');
+	//レンダラーのサイズの設定
+	renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+	//キャンバスフレームDOM要素にcanvas要素を追加
+	canvasFrame.appendChild(renderer.domElement);
+
+	//レンダラークリアーカラーの設定
+	renderer.setClearColor(0xFFFFFF, 1.0);
+	//シャドーマップの利用
+	renderer.shadowMap.enabled = true;
+
+	//シーンオブジェクトの生成
+	scene = new THREE.Scene();
+}
+////////////////////////////////////////////////////////////////////
+// カメラ初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var camera;    //カメラオブジェクト
+function initCamera() {
+	//カメラオブジェクトの生成
+	camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+	//カメラの位置の設定
+	camera.position.set(150, 150, 150);
+	//カメラの上ベクトルの設定
+	camera.up.set(0, 0, 1);
+	//カメラの中心位置ベクトルの設定
+	camera.lookAt({ x: 0, y: 0, z: 0 }); //トラックボール利用時は自動的に無効
+
+	//トラックボールオブジェクトの宣言
+	trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+
+	//トラックボールの回転無効化と回転速度の設定
+	trackball.noRotate = false;
+	trackball.rotateSpeed = 4.0;
+
+	//トラックボールの拡大無効化と拡大速度の設定
+	trackball.noZoom = false;
+	trackball.zoomSpeed = 4.0;
+
+	//トラックボールのカメラ中心移動の無効化と中心速度の設定
+	trackball.noPan = false;
+	trackball.panSpeed = 1.0;
+	trackball.target = new THREE.Vector3(0, 0, 10);
+
+	//トラックボールのスタティックムーブの有効化
+	trackball.staticMoving = true;
+	//トラックボールのダイナミックムーブ時の減衰定数
+	trackball.dynamicDampingFactor = 0.3;
+}
+////////////////////////////////////////////////////////////////////
+// 光源初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var directionalLight;  //平行光源オブジェクト
+var cameraHelper;      //カメラ可視化オブジェクト
+function initLight() {
+	//平行光源オブジェクトの生成
+	directionalLight = new THREE.DirectionalLight(0xFFFFFF, 1.0, 0);
+	//平行光源オブジェクトの位置の設定
+	directionalLight.position.set(20, -50, 150);
+	//平行光源オブジェクトのシーンへの追加
+	scene.add(directionalLight);
+	//平行光源オブジェクトの影の生成元
+	directionalLight.castShadow = true;
+
+	//正投影カメラのパラメータ
+	directionalLight.shadow.camera.left = -100;    //左
+	directionalLight.shadow.camera.right = 100;    //右
+	directionalLight.shadow.camera.top = 100;      //上
+	directionalLight.shadow.camera.bottom = -100;  //下
+	directionalLight.shadow.camera.near = 0;       //手前
+	directionalLight.shadow.camera.far = 300;      //奥
+
+	//シャドーカメラ可視化オブジェクトの生成
+	cameraHelper = new THREE.CameraHelper( directionalLight.shadow.camera );
+	//シャドーカメラ可視化オブジェクトのシーンへの追加
+	scene.add( cameraHelper );
+
+	//シャドーマップ可視化オブジェクトの生成
+	shadowMapViewer = new THREE.ShadowMapViewer( directionalLight );
+	shadowMapViewer.position.x = 10;
+	shadowMapViewer.position.y = 10;
+	shadowMapViewer.size.width = window.innerWidth / 3;
+	shadowMapViewer.size.height = window.innerHeight / 3;
+	shadowMapViewer.update();
+
+}
+////////////////////////////////////////////////////////////////////
+// オブジェクト初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var axis, //軸オブジェクト
+    cube,  //直方体オブジェクト
+    torus, //トーラスオブジェクト
+    plane; //直方体オブジェクト
+function initObject() {
+	//軸オブジェクトの生成
+	axis = new THREE.AxisHelper(100);
+	//軸オブジェクトのシーンへの追加
+	scene.add(axis);
+	//軸オブジェクトの位置座標を設定
+	axis.position.set(0, 0, 0);
+
+	//形状オブジェクトの宣言と生成
+	var geometry = new THREE.CubeGeometry(20, 20, 20);
+	//材質オブジェクトの宣言と生成
+	var material = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+	//直方体オブジェクトの生成
+	cube = new THREE.Mesh(geometry, material);
+	//直方体オブジェクトの影の生成元
+	cube.castShadow = true;
+	//直方体オブジェクトのシーンへの追加
+	scene.add(cube);
+	//直方体オブジェクトの位置座標を設定
+	cube.position.set(0, 40, 30);
+
+	//形状オブジェクトの宣言と生成
+	var geometry = new THREE.TorusGeometry(20, 5, 50, 50);
+	//材質オブジェクトの宣言と生成
+	var material = new THREE.MeshLambertMaterial({ color: 0xFFE98D });
+	//トーラスオブジェクトの生成
+	torus = new THREE.Mesh(geometry, material);
+	//トーラスオブジェクトの影の生成元
+	torus.castShadow = true;
+	//トーラスオブジェクトのシーンへの追加
+	scene.add(torus);
+	//トーラスオブジェクトの位置座標を設定
+	torus.position.set(30, -10, 30);
+
+	//形状オブジェクトの宣言と生成
+	var geometry = new THREE.PlaneGeometry(200, 200, 100, 100);
+	//材質オブジェクトの宣言と生成
+	var material = new THREE.MeshLambertMaterial({ color: 0xEEEEEE });
+	//平面オブジェクトの生成
+	plane = new THREE.Mesh(geometry, material);
+	//平面オブジェクトの影の描画
+	plane.receiveShadow = true;
+	//平面オブジェクトのシーンへの追加
+	scene.add(plane);
+}
+
+////////////////////////////////////////////////////////////////////
+// 無限ループ関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var step = 0; //ステップ数
+function loop() {
+	//トラックボールによるカメラオブジェクトのプロパティの更新
+	trackball.update();
+
+	//ステップ数のインクリメント
+	step++;
+	//直方体の角度の変更
+	cube.rotation.set(step / 100, 0, 0);
+	//トーラスの角度の変更
+	torus.rotation.set(step / 100, 0, 0);
+
+	//レンダリング
+	renderer.render(scene, camera);
+
+	//シャドーマップのレンダリング
+	shadowMapViewer.render( renderer );
+
+	//画像生成
+	makePicture();
+
+	//「loop()」関数の呼び出し
+	requestAnimationFrame(loop);
+}
+
+//////////////////////////////////////////////
+// 画像作成用	
+//////////////////////////////////////////////
+var makePictureFlag = false;
+
+//画像作成用イベント
+window.addEventListener('keydown', function (e) {
+
+	//キーボードイベント時のキー取得
+	var keyChar = String.fromCharCode( e.keyCode ).toLowerCase();
+
+	//キーボードの「s」が押された場合
+	if(keyChar == "s") {
+		makePictureFlag = true;
+	}
+
+});	
+//画像作成関数
+function makePicture(){
+
+	if( !makePictureFlag ) return;
+
+	//グラフィックスが描画されたcanvas要素
+	var canvas = renderer.domElement;
+
+	//a要素の生成
+	var a = document.createElement("a");
+	//canvas要素→DataURL形式
+	a.href = canvas.toDataURL("image/png");
+	//PNGファイル名の命名
+	a.download = "picture";
+	a.innerHTML = "ダウンロード";
+
+	//id="thumbnails"のdiv要素の子要素にa要素を追加	
+	document.getElementsByTagName( "body" )[0].appendChild(a);
+
+	makePictureFlag = false;
+
+}
+</script>
+</head>
+<body>
+	<div id="canvas-frame"></div><!-- canvas要素を配置するdiv要素 -->
+</body>
+</html>

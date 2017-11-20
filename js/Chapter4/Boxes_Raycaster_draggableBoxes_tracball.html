@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>マウスドラックによるオブジェクトの移動 ＋ トラックボールによるカメラ操作</title>
+<script src="../three.js_r75/build/three.js"></script>      <!-- Three.js用ライブラリ -->
+<script src="../three.js_r75/examples/js/controls/TrackballControls.js"></script> <!-- トラックボール用ライブラリ -->
+<style>
+*{padding:0px; margin:0px}
+div#canvas-frame{
+	width: 500px;  /* 横幅 */
+	height: 500px; /* 縦幅 */
+	overflow:hidden;
+}
+</style>
+<script>
+////////////////////////////////////////////////////////////////////
+// windowイベントの定義
+////////////////////////////////////////////////////////////////////
+window.addEventListener("load", function () {
+	threeStart(); //Three.jsのスタート関数の実行
+});
+////////////////////////////////////////////////////////////////////
+// Three.jsスタート関数の定義
+////////////////////////////////////////////////////////////////////
+function threeStart() {
+	initThree();  //Three.js初期化関数の実行
+	initObject(); //オブジェクト初期化関数の実行
+	initCamera(); //カメラ初期化関数の実行
+	initEvent();  //イベント準備関数の実行
+	initDragg();  //マウスドラック準備関数の実行
+	loop();       //無限ループ関数の実行
+}
+////////////////////////////////////////////////////////////////////
+// Three.js初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var renderer,    //レンダラーオブジェクト
+    scene,       //シーンオブジェクト
+    canvasFrame; //キャンバスフレームのDOM要素
+function initThree() {
+	//キャンバスフレームDOM要素の取得
+	canvasFrame = document.getElementById('canvas-frame');
+	//レンダラーオブジェクトの生成
+	renderer = new THREE.WebGLRenderer({ antialias: true });
+	//renderer = new THREE.CanvasRenderer();//<-----------------------------------------------------（canvasレンダラー）
+
+	if (!renderer) alert('Three.js の初期化に失敗しました');
+	//レンダラーのサイズの設定
+	renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+	//キャンバスフレームDOM要素にcanvas要素を追加
+	canvasFrame.appendChild(renderer.domElement);
+
+	//レンダラークリアーカラーの設定
+	renderer.setClearColor(0xEEEEEE, 1.0);
+
+	//シーンオブジェクトの生成
+	scene = new THREE.Scene();
+}
+////////////////////////////////////////////////////////////////////
+// カメラ初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var camera;    //カメラオブジェクト
+var trackball; ///トラックボールオブジェクト
+function initCamera() {
+	//カメラオブジェクトの生成
+	camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+	//カメラの位置の設定
+	camera.position.set(100, 100, 100);
+	//カメラの上ベクトルの設定
+	camera.up.set(0, 0, 1);
+	//カメラの中心位置ベクトルの設定
+	camera.lookAt({ x: 0, y: 0, z: 0 }); //トラックボール利用時は自動的に無効
+
+	//トラックボールオブジェクトの宣言
+	trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+	//トラックボール動作範囲のサイズとオフセットの設定
+	trackball.screen.width = canvasFrame.clientWidth;                        //横幅
+	trackball.screen.height = canvasFrame.clientHeight;                      //縦幅
+	trackball.screen.offsetLeft = canvasFrame.getBoundingClientRect().left;  //左オフセット
+	trackball.screen.offsetTop = canvasFrame.getBoundingClientRect().top;    //右オフセット
+
+	//トラックボールの回転無効化と回転速度の設定
+	trackball.noRotate = false;
+	trackball.rotateSpeed = 4.0;
+
+	//トラックボールの拡大無効化と拡大速度の設定
+	trackball.noZoom = false;
+	trackball.zoomSpeed = 4.0;
+
+	//トラックボールのカメラ中心移動の無効化と中心速度の設定
+	trackball.noPan = false;
+	trackball.panSpeed = 1.0;
+	trackball.target = new THREE.Vector3(0, 10, 0);
+
+	//トラックボールのスタティックムーブの有効化
+	trackball.staticMoving = true;
+	//トラックボールのダイナミックムーブ時の減衰定数
+	trackball.dynamicDampingFactor = 0.3;
+
+}
+
+////////////////////////////////////////////////////////////////////
+// オブジェクト初期化関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var axis; //軸オブジェクト
+var cubes = []; //立方体オブジェクト
+var rayReceiveObjects = []; //光線を受けるオブジェクト配列
+function initObject() {
+	//軸オブジェクトの生成
+	axis = new THREE.AxisHelper(100);
+	//軸オブジェクトのシーンへの追加
+	scene.add(axis);
+	//軸オブジェクトの位置座標を設定
+	axis.position.set(0, 0, 0);
+
+	///////////////立方体の形状と材質の定義//////////////////
+	//形状オブジェクトの宣言と生成
+	var geometry = new THREE.BoxGeometry(30, 30, 30);
+	//材質オブジェクトの宣言と生成
+	var material = new THREE.MeshNormalMaterial();
+
+	///////////////立方体オブジェクトの準備//////////////////
+	//立方体オブジェクトの生成
+	cubes[0] = new THREE.Mesh(geometry, material);
+	//立方体オブジェクトのシーンへの追加
+	scene.add(cubes[0]);
+	//立方体オブジェクトの位置座標を設定
+	cubes[0].position.set(0, -50, 0);
+
+	//立方体オブジェクトの生成
+	cubes[1] = new THREE.Mesh(geometry, material);
+	//立方体オブジェクトのシーンへの追加
+	scene.add(cubes[1]);
+	//立方体オブジェクトの位置座標を設定
+	cubes[1].position.set(0, 0, 0);
+
+	//立方体オブジェクトの生成
+	cubes[2] = new THREE.Mesh(geometry, material);
+	//立方体オブジェクトのシーンへの追加
+	scene.add(cubes[2]);
+	//立方体オブジェクトの位置座標を設定
+	cubes[2].position.set(0, 50, 0);
+
+	//光線受信判定用
+	cubes[0].name = "箱１";
+	cubes[1].name = "箱２";
+	cubes[2].name = "箱３";
+	//光線受信オブジェクト配列へ追加
+	rayReceiveObjects.push( cubes[0] );
+	rayReceiveObjects.push( cubes[1] );
+	rayReceiveObjects.push( cubes[2] );
+
+
+}
+////////////////////////////////////////////////////////////////////
+// イベント準備関数
+////////////////////////////////////////////////////////////////////
+function initEvent() {
+
+}
+////////////////////////////////////////////////////////////////////
+// マウスドラック準備関数
+////////////////////////////////////////////////////////////////////
+function initDragg(){
+
+	///////////////光線受信用平面オブジェクトの定義//////////////////
+	//形状オブジェクトの宣言と生成
+	var geometry = new THREE.PlaneBufferGeometry(2000, 2000, 8, 8);
+	//材質オブジェクトの宣言と生成
+	var material = new THREE.MeshBasicMaterial({ color: 0x000000,  wireframe: true /*, transparent: true, opacity:0 */})
+	//平面オブジェクトの生成
+	plane = new THREE.Mesh( geometry, material );
+	//平面オブジェクトのシーンへの追加
+	scene.add(plane);
+			
+	canvasFrame.addEventListener('mousemove', onDocumentMouseMove, false);//
+	canvasFrame.addEventListener('mousedown', onDocumentMouseDown, true); //<-trueに変更
+	canvasFrame.addEventListener('mouseup'  , onDocumentMouseUp,   false);//
+	canvasFrame.addEventListener('mouseout' , onDocumentMouseUp, false);  //<--追記（額縁外にマウスドラック時の修正）
+
+	//マウスクリック時の選択したオブジェクト中心からのマウスポインタのズレ
+	var offset = new THREE.Vector3();
+	var INTERSECTED; //マウスポインタが指しているオブジェクト 
+	var SELECTED;    //マウスドラック中のオブジェクト
+
+	//HTML要素の位置による補正量の取得
+	var elementOffsetLeft, elementOffsetTop; 
+	//マウスポインタの位置
+	var mouse = new THREE.Vector2();
+	//光線発射オブジェクト
+	var raycaster = new THREE.Raycaster();
+
+	function onDocumentMouseMove(event) {
+
+		//canvas要素の絶対座標の取得
+		elementOffsetLeft = canvasFrame.getBoundingClientRect( ).left; 
+		elementOffsetTop = canvasFrame.getBoundingClientRect( ).top; 
+
+		//クリップ座標系におけるマウスポインタの位置座標の取得
+		mouse.x = ( (event.clientX-elementOffsetLeft) / canvasFrame.clientWidth) * 2 - 1;
+		mouse.y = -( (event.clientY-elementOffsetTop) / canvasFrame.clientHeight) * 2 + 1;
+
+		//マウスポインタの位置をと現時点のカメラ関連パラメータを設定
+		raycaster.setFromCamera( mouse, camera );
+
+		//オブジェクトがマウスドラックされている時
+		if (SELECTED) {
+			//光線と交わる平面オブジェクトオブジェクトを収集
+			var intersects = raycaster.intersectObject(plane);
+			//マウスドラック時のマウスポインタの指している平面オブジェクトの３次元空間中の位置座標
+			var vec3 = intersects[0].point;
+			var v = vec3.sub( offset );
+
+			//マウスドラックされているオブジェクトを移動
+			SELECTED.position.copy( v );
+			return;
+		}
+
+		//光線と交わるオブジェクトを収集
+		var intersects = raycaster.intersectObjects( rayReceiveObjects )
+		//マウスポインタがオブジェクト上にある場合
+		if (intersects.length > 0) {
+			if (INTERSECTED != intersects[0].object) {
+				//マウスポインタが指しているオブジェクトが登録されていなければ、一番手前のオブジェクトを「INTERSECTED」に登録
+				INTERSECTED = intersects[0].object;
+				//平面オブジェクトの位置座標を「INTERSECTED」に登録されたオブジェクトと同じ位置座標とする
+				plane.position.copy(INTERSECTED.position);
+				//平面オブジェクトの上ベクトルをカメラの位置座標の方向へ向ける
+				plane.lookAt(camera.position);
+			}
+			//マウスポインタのカーソルを変更
+			canvasFrame.style.cursor = 'pointer';
+		} else {
+			//マウスポインタがオブジェクトから離れている場合
+			INTERSECTED = null;
+			//マウスポインタのカーソルを変更
+			canvasFrame.style.cursor = 'auto';
+		}
+	}
+
+	function onDocumentMouseDown(event) {
+		
+		//光線と交わるオブジェクトを収集
+		var intersects = raycaster.intersectObjects( rayReceiveObjects );
+
+		//交わるオブジェクトが１個以上の場合
+		if (intersects.length > 0) {
+			//トラックボールを無効化
+			trackball.enabled = false;
+			//クリックされたオブジェクトを「SELECTED」に登録
+			SELECTED = intersects[0].object;
+
+			//光線と交わる平面オブジェクトオブジェクトを収集
+			var intersects = raycaster.intersectObject(plane);
+			//クリック時のマウスポインタの指した平面オブジェクトの３次元空間中の位置座標
+			var vec3 = intersects[0].point;
+			//平面オブジェクトの中心から見た相対的な位置座標
+			offset.copy(vec3).sub(plane.position);
+			//マウスポインタのカーソルを変更
+			canvasFrame.style.cursor = 'move';
+		}
+	}
+	function onDocumentMouseUp(event) {
+		//トラックボールを有効化
+		trackball.enabled = true;
+		//マウスアップ時にマウスポインタがオブジェクト上にある場合
+		if (INTERSECTED) {
+			//平面オブジェクトの位置座標をオブジェクトの位置座標に合わせる
+			plane.position.copy(INTERSECTED.position);
+			//マウスドラックの解除
+			SELECTED = null;
+		}
+		//マウスポインタのカーソルを変更
+		canvasFrame.style.cursor = 'auto';
+	}
+}
+
+////////////////////////////////////////////////////////////////////
+// 無限ループ関数の定義
+////////////////////////////////////////////////////////////////////
+//グローバル変数の宣言
+var step = 0; //ステップ数
+function loop() {
+	//トラックボールによるカメラオブジェクトのプロパティの更新
+	trackball.update();
+
+	//ステップ数のインクリメント
+	step++;
+	//各立方体の角度の変更
+	cubes[0].rotation.set(step / 100, 0, 0);
+	cubes[1].rotation.set(0, step / 100, 0);
+	cubes[2].rotation.set(0, 0, step / 100);
+
+	//レンダリング
+	renderer.render(scene, camera);
+
+	//画像生成
+	makePicture();
+
+	//「loop()」関数の呼び出し
+	requestAnimationFrame(loop);
+}
+
+//////////////////////////////////////////////
+// 画像作成用	
+//////////////////////////////////////////////
+var makePictureFlag = false;
+
+//画像作成用イベント
+window.addEventListener('keydown', function (e) {
+
+	//キーボードイベント時のキー取得
+	var keyChar = String.fromCharCode( e.keyCode ).toLowerCase();
+
+	//キーボードの「s」が押された場合
+	if(keyChar == "s") {
+		makePictureFlag = true;
+	}
+
+});	
+//画像作成関数
+function makePicture(){
+
+	if( !makePictureFlag ) return;
+
+	//グラフィックスが描画されたcanvas要素
+	var canvas = renderer.domElement;
+
+	//a要素の生成
+	var a = document.createElement("a");
+	//canvas要素→DataURL形式
+	a.href = canvas.toDataURL("image/png");
+	//PNGファイル名の命名
+	a.download = "picture";
+	a.innerHTML = "ダウンロード";
+
+	//id="thumbnails"のdiv要素の子要素にa要素を追加	
+	document.getElementsByTagName( "body" )[0].appendChild(a);
+
+	makePictureFlag = false;
+
+}
+
+</script>
+</head>
+<body>
+	<div id="canvas-frame"></div><!-- canvas要素を配置するdiv要素 -->
+</body>
+</html>
