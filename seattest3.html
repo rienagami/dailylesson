@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>椅子写経</title>
+    <script src="js/three.js_r75/build/three.js"></script>
+    <script src="js/three.js_r75/examples/js/controls/TrackballControls.js"></script>
+    
+    <style>
+        * {
+            padding: 0px;
+            margin: 0px;
+        }
+
+        div#canvas-frame {
+            width: 1200px;
+            height: 700px;
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+        window.addEventListener("load", function() {
+            threeStart();
+
+
+        });
+
+        function threeStart() {
+            initThree();
+            initObject();
+            initCamera();
+            loop();
+        }
+
+        var renderer,
+            scene,
+            canvasFrame;
+
+        function initThree() {
+
+
+            canvasFrame = document.getElementById('canvas-frame');
+
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+
+            if (!renderer) alert('Three.jsの初期化に失敗しました。');
+
+            renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+
+            canvasFrame.appendChild(renderer.domElement);
+
+            renderer.setClearColor(0xb1b1b1, 1.0);
+
+            scene = new THREE.Scene();
+            for (var i = 0; i < 10; i += 1) {
+                scene.add(makeChair(10 + 40 * i, 0, 0));
+                
+            
+                
+            }
+            }
+
+        
+
+
+
+        var camera;
+
+        function initCamera() {
+
+            camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+
+            camera.position.set(60, 30, 100);
+
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+            });
+
+            trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+            trackball.screen.width = canvasFrame.clientWidth;
+
+            trackball.screen.height = canvasFrame.clientHeight;
+
+
+            trackball.screen.offserLeft = canvasFrame.getBoundingClientRect().left;
+
+            trackball.screen.offsetTop = canvasFrame.getBoundingClientRect().top;
+
+
+
+
+            trackball.noZoom = false;
+            trackball.zoomSpeed = 4.0;
+
+            trackball.noPan = false;
+            trackball.panSpeed = 1.0;
+            trackball.target = new THREE.Vector3(0, 0, 0);
+
+            trackball.staticMoving = true;
+
+            trackball.dynamicDampingFactor = 0.3;
+
+
+
+        }
+
+        var axis;
+
+        function initObject() {
+            axis = new THREE.AxisHelper(100);
+            scene.add(axis);
+            axis.position.set(0, 0, 0);
+        }
+
+        var step = 0;
+
+        function loop() {
+            trackball.update();
+            step++;
+            renderer.render(scene, camera);
+            makePicture();
+            requestAnimationFrame(loop);
+
+        }
+
+
+        var makePictureFlag = false;
+
+        window.addEventListener('keydown', function(e) {
+
+            var keychar = String.fromChaeCode(e.keyCode).toLowerCase();
+
+            if (keychar == "s") {
+                makePictureFrag = true;
+            }
+        });
+
+
+        function makePicture() {
+            if (!makePictureFlag) return;
+            var canvas = renderer.domElement;
+
+            var a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "picture";
+            a.innerHTML = "ダウンロード";
+
+            document.getElementsByName("body")[0].appendChild(a);
+
+            makePictureFlag = false;
+        }
+
+
+        function makeSeat(width, height, depth) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshPhongMaterial({
+	color:0xffff99
+
+});
+            var seat = new THREE.Mesh(geometry, material);
+            return seat;
+        }
+
+        function makeBack(width, height, depth, y, z) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            seat.position.set(0, y, z);
+            return seat;
+        }
+
+
+        function makeArms1(width, height, depth, x, y,z) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            seat.position.set(x, y, z);
+            return seat;
+        }
+
+        function makeArms2(width, height, depth, x, y,z) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry, material);
+            seat.position.set(x, y, z);
+            return seat;
+        }
+
+
+
+        function makeChair(x, y, z) {
+            var chairGroup = new THREE.Group();
+            chairGroup.add(makeSeat(20, 5, 23));
+            chairGroup.add(makeBack(20, 45, 5, 5, -10));
+            chairGroup.add(makeArms1(5, 3, 20, 12.5, 5, -2.5));
+            chairGroup.add(makeArms2(5, 3, 20, -12.5, 5, -2.5));
+
+
+            chairGroup.position.set(x, y, z);
+            return chairGroup;
+        }
+    </script>
+
+
+
+</head>
+
+<body>
+
+    <div id="canvas-frame"></div>
+
+
+</body>
+</html>
