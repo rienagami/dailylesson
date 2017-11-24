@@ -477,7 +477,7 @@
 
         function makeScreenSeat(width, height, depth) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
-            var material = new THREE.MeshNormalMaterial();
+            var material = new THREE.MeshBasicMaterial( { color: 0xffffff, map: texture, specularMap: 0xcccccc } );
             var screen = new THREE.Mesh(geometry, material);
             return screen;
 
@@ -540,7 +540,26 @@
         }
 
 
+        //******ビデオエレメント作成*******
+        var video = document.createElement('video');
+        //動画の指定
+        video.src = 'video/dunkirk.mp4';
+        //動画をループ再生
+        video.loop = true;
+        //動画の読み込み・再生
+        video.load();
+        video.play();
         
+//******ビデオテクスチャの作成******
+        //動画テクスチャ作成
+        var texture = new THREE.VideoTexture( video );
+        //1テクセルが1ピクセルより大きな範囲をカバーするときのテクスチャサンプリング方法の指定
+        texture.magFilter = THREE.LinearFilter;
+        //1テクセル画1ピクセルより小さな範囲をカバーするときのテクスチャサンプリング方法の指定
+        texture.format = THREE.RGBFFormat;
+        
+//
+
         
         
 

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>椅子を作る！</title>
+    <script src="js/three.js_r75/build/three.js"></script>
+    <script src="js/three.js_r75/examples/js/controls/TrackballControls.js"></script>
+    <style>
+        /*  ↓↓↓↓↓↓↓↓↓これを消したら表示全部消えた  ↓↓↓↓↓↓↓↓↓*/
+
+        * {
+            padding: 0px;
+            margin: 0px
+        }
+
+        div#canvas-frame {
+            width: 1200px;
+            height: 700px;
+            overflow: hidden;
+        }
+    </style>
+
+    <script>
+        //windowイベントの定義
+        window.addEventListener("load", function() {
+            threeStart(); //Three.jsのスタート関数の実行
+        });
+
+
+        //Three.jsスタート関数の定義
+        //Three.jsスタートの宣言
+        function threeStart() {
+            initThree();
+            initObject();
+            initCamera();
+            loop();
+        }
+
+        //Three.js初期化関数の定義
+        var renderer,
+            scene,
+            canvasFrame;
+
+        function initThree() {
+            //キャンバスフレームDOM要素の取得
+            canvasFrame = document.getElementById('canvas-frame');
+            //レンダラーオブジェクトの生成
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+
+
+            if (!renderer) alert('Three.jsの初期化に失敗しました。');
+
+            renderer.setSize(canvasFrame.clientWidth, canvasFrame.clientHeight);
+            //キャンバスフレームDOM要素にcanvas要素を追加
+            canvasFrame.appendChild(renderer.domElement);
+
+            //レンダラークリアカラーの設定
+            renderer.setClearColor(0xb1b1b1, 1.0);
+
+            //シーンオブジェクトの生成
+            scene = new THREE.Scene();
+
+            scene.add(makeBoxs(0, 0, 0));
+
+
+
+
+        }
+
+        //カメラ初期化関数の定義
+        var camera;
+
+        function initCamera() {
+            camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
+
+            //カメラの位置の設定
+            camera.position.set(60, 30, 100);
+            //カメラの上ベクトルの設定
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+
+            });
+
+            trackball = new THREE.TrackballControls(camera, canvasFrame);
+
+            //トラックボール動作範囲のサイズとオフセットの設定
+
+            //横幅
+            trackball.screen.width = canvasFrame.clientWidth;
+
+            //縦幅
+            trackball.screen.height = canvasFrame.clientHeight;
+
+            trackball.screen.offsetLeft = canvasFrame.getBoundingClientRect().left;
+            trackball.screen.offsetTop = canvasFrame.getBoundingClientRect().top;
+
+            //トラックボールの回転無効化と回転速度の決定
+            trackball.noZoom = false;
+            trackball.zoomSpeed = 4.0;
+
+            //トラックボールのカメラ中心移動の無効化と中心速度の設定
+            trackball.noPan = false;
+            trackball.panSpeed = 1.0;
+            trackball.target = new THREE.Vector3(0, 0, 0);
+
+            //トラックボールのスタティックムーブの有効化
+            trackball.staticMoving = true;
+            //トラックボールのダイナミックムーブ時の減衰定数
+            trackball.dynamicDampingFactor = 0.3;
+        }
+
+
+
+        //オブジェクト初期化関数の定義
+        //ヘルパー
+        var axis; //軸オブジェクト
+
+        function initObject() {
+            axis = new THREE.AxisHelper(100);
+            scene.add(axis);
+            axis.position.set(0, 0, 0);
+        }
+
+        //        var spotLightShadowHelper;
+        //        
+        //        function initObject2(){
+        //           spotLightShadowHelper = new THREE.CameraHelper( spotLight.shadow.camera);
+        //           scene.add( spotLightShadowHelper);
+        //           spotLightShadowHelper.position.set(1,1,1);   
+
+        //}
+
+
+        //無限ループ関数の定義
+        var step = 0; //ステップ数
+        function loop() {
+            trackball.update();
+            step++;
+            renderer.render(scene, camera);
+            makePicture();
+            requestAnimationFrame(loop);
+        }
+
+
+
+
+        //画像作成用
+        var makePictureFlag = false;
+
+        //画像作成イベント
+        window.addEventListener('keydown', function(e) {
+
+            var keychar = String.fromCharCode(e.keyCode).toLowerCase();
+
+            //            var keyChar = String.fromCharCode(e.keyCode).toLowerCase();
+
+            if (keychar == "s") {
+                makePictureFrag = true;
+            }
+
+        });
+
+        //画像作成関数
+        function makePicture() {
+            if (!makePictureFlag) return;
+            var canvas = renderer.domElement;
+
+            var a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "picture";
+            a.innerHTML = "ダウンロード";
+
+            document.getElementsByName("body")[0].appendChild(a);
+
+            makePictureFlag = false;
+        }
+
+
+
+
+        //BOXを作った
+
+        function makeBox(width, height, depth) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: texture,
+            specularMap: 0xcccccc
+        });
+            var box = new THREE.Mesh(geometry, material);
+            return box;
+        }
+
+
+        function makeBoxs(x, y, z) {
+            var boxGroup = new THREE.Group();
+            boxGroup.add(makeBox(30, 30, 30));
+            boxGroup.position.set(x, y, z);
+            return boxGroup;
+        }
+
+
+
+
+        var video = document.createElement('video');
+
+        video.src = 'video/dunkirk.mp4'
+        video.loop = true;
+        video.load();
+        video.play();
+
+
+        var texture = new THREE.VideoTexture(video);
+        texture.magFilter = THREE.LinearFilter;
+        texture.format = THREE.RGBFormat;
+
+        var material = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: texture,
+            specularMap: 0xcccccc
+        });
+        //        
+        //        var geometry = new THREE.BoxGeometry(3,3,3);
+        //        var cube = new THREE.Mesh(geometry,material);
+
+        //        //video要素とそれをキャプチャするcanvas要素を生成
+        //        var video = document.createElement('video');
+        //        video.src = "video/dunkirk.mp4";
+        //        video.load();
+        //        video.play();
+        //        
+        //        var videoImage = document.createElement('canvas');
+        //        videoImage.width = 480;
+        //        videoImage.height = 200;
+        //        
+        //        var videoImageContext = videoImage.getContext('2d');
+        //        videoImageContext.fillStyle = '#000000';
+        //        videoImageContext.fillRect(0,0,videoImage.width,videoImage.height);
+        //        
+        //        //生成したcanvasをtextureとしてTHREE.Textureオブジェクトを生成
+        //        var videoTexture = new THREE.Texture(videoImage);
+        //        videoTexture.minFilter = THREE.LinearFilter;
+        //        videoTexture.magFilter = THREE.LinearFilter;
+        //        
+        //        
+        //        //生成したビデオテクスチャをMAPに指定し、overdrawをtrueにしてマテリアルを生成
+        //        var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture,overdraw:true,side:THREE.DoubleSide});
+        //        var movieGeometry = new THREE.PlaneGeometry(10,10,4,4);
+        //        var movieScreen = new THREE.Mesh(movieGeometry,movieMaterial);
+        //        movieScreen.rotation.y = THREE.Math.degToRad(90);
+        //        
+        //        scene.add(movieScreen);
+        //        
+        //        
+        //        //Loop updateの中で実行
+        //        if (video.readyState === video.HAVE_ENOUGH_DATA){
+        //            videoImageContext.drawImage(video,0,0);
+        //            if(videoTexture){
+        //                videoTexture.needsUpdate= true;
+        //            }
+        //        }
+        //        
+        //   
+
+
+        //立方体を用意
+
+        //          geometry.position.set(0,0,0);
+
+        //        scene.add(geometry);
+        //        
+        //videoタグの用意
+        //        var video = document.createElement('video');
+        //        video.src='video/dunkirk.mp4';
+        //        video.load();
+        //        video.play();
+        //        
+        //        
+        //        //three.js用のテクスチャに変換
+        //        var texture = new THREE.VideoTexture(video);
+        //        texture.minFilter = THREE.LinearFilter;
+        //        texture.magFilter = THREE.LinearFilter;
+        //        texture.format = THREE.RGBFormat;
+        //        var geometry = new THREE.BoxGeometry(30,30,30);
+        //        var material = new THREE.MeshPhongMaterial({map:texture});
+        //        var mesh = new THREE.mesh(geometry,material);
+
+
+        //        var video = document.createElement('video');
+        //        video.src="video/dunkirk.mp4";
+        //        video.load();
+        //        video.play();
+        //        
+        //        var videoImage = document.createElement('canvas');
+        //        videoImage.width = 480;
+        //        videoImage.height = 200;
+        //        
+        //        var videoImageCintext = videoImage.getContext('2d');
+        //        videoImageContext.fillStyle = '#000000';
+        //        videoImageContext.fillRect(0,0,videoImage.width, videoImage.height);
+        //        
+        //        
+        //        var videoTexture = new THREE.Texture(videoImage);
+        //        videoTexture.minFilter = THREE.LinearFilter;
+        //        videoTexture.magFilter = THREE.LinearFilter;
+        //        
+        //        var movieMaterial = new THREE.MeshBasicMaterial({map: videoTexture,overdraw:true,side:THREE.DoubleSide});
+        //        var movieGeometry = new THREE.OlaneGeometry(10,10,4,4);
+        //        var movieScreen = new THREE.Mesh(movieGeometry, movieMaterial);
+        //        movieScreen.rotation.y = THREE.Math.degToRad(90);
+        //        
+        //        scene.add(movieScreen);
+        //        
+        //        if (video.readyState === video.HAVE_ENOUGH_DATA){
+        //            videoImageContext.drawImage(video,0,0);
+        //            if (videoTexture){
+        //                videoTexture.needsUpdate = true;
+        //            }
+        //        }
+    </script>
+
+
+
+
+
+</head>
+
+<body>
+    <div id="canvas-frame"></div>
+
+
+
+
+
+
+
+</body>
+
+</html>
