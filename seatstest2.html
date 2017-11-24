@@ -114,8 +114,6 @@
             //スクリーンと座席の肩の丸みをシーンに追加
 
             scene.add(makeScreen(0, 100, 500));
-            scene.add(makeSide1(5, 20, -10));
-            scene.add(makeSide2(-5, 20, -10));
 
 
             //for文で繰り返し処理
@@ -325,6 +323,14 @@
             seat.position.set(0, y, z);
             return seat;
         }
+        
+        function makeMainBack(width,height,depth,y,z){
+            var geometry = new THREE.BoxGeometry(width,height,depth);
+            var material = new THREE.MeshNormalMaterial();
+            var seat = new THREE.Mesh(geometry,material);
+            seat.position.set(0,y,z);
+            return seat;
+        }
 
 
 
@@ -386,9 +392,12 @@
         function makeChair(x, y, z) {
             var chairGroup = new THREE.Group();
             chairGroup.add(makeSeat(20, 5, 23));
-            chairGroup.add(makeBack(10, 40, 5, 5, -10));
+            chairGroup.add(makeBack(10, 5, 5, 22.5, -10));
+            chairGroup.add(makeMainBack(20, 35, 5, 3, -10));
             chairGroup.add(makeArms1(5, 3, 20, 12.5, 5, -2.5));
             chairGroup.add(makeArms2(5, 3, 20, -12.5, 5, -2.5));
+            chairGroup.add(makeSide1(5, 20, -10));
+            chairGroup.add(makeSide2(-5, 20, -10));
             //            chairGroup.add(makeCups(5,10,5,0,0,0));
             //            chairGroup.add(makeTube(5,5,5,1,1,1));
             //            chairGroup.add(makeCups1(1, 0.4, 8, 6,Math.PI*2));
@@ -486,17 +495,6 @@
         }
 
 
-//        var material = new THREE.MeshPhongMaterial({
-//            color:0xffffff,
-//            map:mapTexture
-//        });
-//        
-//        var geometry = new THREE.BoxGeometry(780, 540, 0);
-//        var mesh = new THREE.Mesh( geometry,material);
-//        scene.add(mesh);
-//        
-        
-        
 
 
 
