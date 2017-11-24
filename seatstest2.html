@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>椅子を作る！</title>
@@ -18,6 +19,7 @@
             height: 700px;
             overflow: hidden;
         }
+
     </style>
 
     <script>
@@ -83,17 +85,14 @@
             for (var c = 0; c < 3; c += 1) {
                 scene.add(makeAccessibleChair(-50 + 50 * c, -15, 40));
             }
-            
-            
+
+
             for (var d = 0; d < 4; d += 1) {
                 scene.add(makeChair(-405 + 30 * d, -15, 40));
                 scene.add(makeChair(315 + 30 * d, -15, 40));
             }
-            
-           
-            
-            
-            
+
+
 
 
             for (var f = 0; f < 6; f += 1) {
@@ -106,31 +105,33 @@
                 scene.add(makeExChair(380 + 30 * f, 105, -280));
                 scene.add(makeExChair(-380 + -30 * f, 90, -240));
                 scene.add(makeExChair(-380 + -30 * f, 105, -280));
-                
+
                 //前のブロック（一部）               
                 scene.add(makeChair(-315 + -30 * f, 0, 0));
                 scene.add(makeChair(315 + 30 * f, 0, 0));
 
             }
-            
-            
-            
+
+            scene.add(makeScreen(0, 100, 500));
+
+
+
             for (var h = 0; h < 8; h += 1) {
                 scene.add(makeChair(-315 + -30 * h, 30, -80));
                 scene.add(makeChair(315 + 30 * h, 30, -80));
-                
+
             }
-            
-            
+
+
             for (var g = 0; g < 7; g += 1) {
                 scene.add(makeChair(-315 + -30 * g, 15, -40));
                 scene.add(makeChair(315 + 30 * g, 15, -40));
-                
-            }
-            
 
-            
-            
+            }
+
+
+
+
             for (var n = 0; n < 9; n += 1) {
 
 
@@ -243,6 +244,9 @@
             requestAnimationFrame(loop);
         }
 
+
+
+
         //画像作成用
         var makePictureFlag = false;
 
@@ -275,6 +279,21 @@
         }
 
 
+
+                //ポリゴンの頂点座標
+                var vertices = [
+                    1, 1, 1, 0, 0, -1, 0, -1, 0, -1, 0, 0
+                ];
+        
+                //ポリゴンの面指定配列
+                var faces = [
+                    2, 1, 0, 0, 3, 2, 1, 3, 0, 2, 3, 1
+                ];
+
+
+
+
+
         //        function makeLight() {
         //            var light = new THREE.DirectionalLight(0xffffff);
         //            light.position.set(1, 1, 1).normalize();
@@ -285,24 +304,40 @@
         function makeSeat(width, height, depth) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
             var material = new THREE.MeshPhongMaterial({
-                color: 0x6699FF
+                color: 0x335391
             });
             var seat = new THREE.Mesh(geometry, material);
             return seat;
         }
 
 
+
         function makeBack(width, height, depth, y, z) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
-            var material = new THREE.MeshNormalMaterial();
+            var material = new THREE.MeshPhongMaterial({
+                color: 0x335391
+            });
             var seat = new THREE.Mesh(geometry, material);
             seat.position.set(0, y, z);
             return seat;
         }
 
+
+
+//                function makeBack(vertices, faces, radius, detail, y, z) {
+//                    var geometry = new THREE.PolyhedronGeometry(vertices, faces, 20, 0);
+//                    var material = new THREE.MeshNormalMaterial();
+//                    var seat = new THREE.Mesh(geometry, material);
+//                    seat.position.set(0, y, z);
+//                    return seat;
+//                }
+
+
         function makeArms1(width, height, depth, x, y, z) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
-            var material = new THREE.MeshNormalMaterial();
+            var material = new THREE.MeshPhongMaterial({
+                color: 0x335391
+            });
             var seat = new THREE.Mesh(geometry, material);
             seat.position.set(x, y, z);
             return seat;
@@ -310,25 +345,27 @@
 
         function makeArms2(width, height, depth, x, y, z) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
-            var material = new THREE.MeshNormalMaterial();
-            var seat = new THREE.Mesh(geometry, material);
-            seat.position.set(x, y, z);
-            return seat;
-        }
-
-        function makeCups(width, height, depth, x, y, z) {
-            var geometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 32);
             var material = new THREE.MeshPhongMaterial({
-                color: 0xff0000
+                color: 0x335391
             });
             var seat = new THREE.Mesh(geometry, material);
-            seat.castShadow = true;
-            seat.receiveShadow = true;
-            //            scene.add( mesh );
             seat.position.set(x, y, z);
             return seat;
-
         }
+
+        //        function makeCups(width, height, depth, x, y, z) {
+        //            var geometry = new THREE.CylinderBufferGeometry(0.5, 0.5, 1, 32);
+        //            var material = new THREE.MeshPhongMaterial({
+        //                color: 0xff0000
+        //            });
+        //            var seat = new THREE.Mesh(geometry, material);
+        //            seat.castShadow = true;
+        //            seat.receiveShadow = true;
+        //            //            scene.add( mesh );
+        //            seat.position.set(x, y, z);
+        //            return seat;
+        //
+        //        }
 
         //        function makeTube(width, height, depth, x, y,z){
         //            var geometry = new THREE.TubeGeometry(width,height,depth);
@@ -349,7 +386,7 @@
         function makeChair(x, y, z) {
             var chairGroup = new THREE.Group();
             chairGroup.add(makeSeat(20, 5, 23));
-            chairGroup.add(makeBack(20, 45, 5, 5, -10));
+            chairGroup.add(makeBack(20, 40, 5, 5, -10));
             chairGroup.add(makeArms1(5, 3, 20, 12.5, 5, -2.5));
             chairGroup.add(makeArms2(5, 3, 20, -12.5, 5, -2.5));
             //            chairGroup.add(makeCups(5,10,5,0,0,0));
@@ -396,7 +433,9 @@
 
         function makeExSeat(width, height, depth) {
             var geometry = new THREE.BoxGeometry(width, height, depth);
-            var material = new THREE.MeshNormalMaterial();
+            var material = new THREE.MeshLambertMaterial({
+                color: 0x6699FF
+            });
             var seat = new THREE.Mesh(geometry, material);
             return seat;
 
@@ -424,6 +463,43 @@
 
 
         }
+
+
+
+        //スクリーンを作る
+
+        function makeScreenSeat(width, height, depth) {
+            var geometry = new THREE.BoxGeometry(width, height, depth);
+            var material = new THREE.MeshNormalMaterial();
+            var screen = new THREE.Mesh(geometry, material);
+            return screen;
+
+        }
+
+
+
+        function makeScreen(x, y, z) {
+            var screenGroup = new THREE.Group();
+            screenGroup.add(makeScreenSeat(780, 540, 0));
+            screenGroup.position.set(x, y, z);
+            return screenGroup;
+
+
+        }
+
+
+        //        // 平行光源
+        //      var directionalLight = new THREE.DirectionalLight(0xFFFFFF);
+        //      directionalLight.position.set(1, 1, 1);
+        //      scene.add(directionalLight);
+        //        
+        //      // ポイント光源
+        //      var pointLight = new THREE.PointLight(0xFFFFFF, 2, 1000);
+        //      scene.add(pointLight);
+        //      var pointLightHelper = new THREE.PointLightHelper(pointLight, 30);
+        //      scene.add(pointLightHelper);
+        //      tick();
+
     </script>
 
 
@@ -434,6 +510,13 @@
 
 <body>
     <div id="canvas-frame"></div>
-</body>
-</html>
 
+
+    
+            
+            
+        
+            
+</body>
+
+</html>
