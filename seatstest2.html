@@ -118,6 +118,9 @@
             //**************************************************************************************************
             scene.add(makeScreen(0, 200, -2500));
             scene.add(makeRoomBox(0, 200, 0));
+            var dirLight = makeLight(0, 230, 500);
+            scene.add(dirLight);
+            scene.add(makeLightHelper(dirLight));
             //ここで表示させる＆場所を指定
             //            scene.add(makeWall(-700, 150, 0));
             //            scene.add(makeWall(700,150,0));
@@ -233,7 +236,7 @@
         function initObject() {
             axis = new THREE.AxisHelper(100);
             scene.add(axis);
-            axis.position.set(0, 0, 0);
+            //            axis.position.set(0, 0, 0);
         }
 
         //        var spotLightShadowHelper;
@@ -883,11 +886,35 @@
 
         //足元のライトをポイントライトで
 
+        function makeLight(x, y, z) {
 
-//
-//        var light = new THREE.PointLight(0xffd00b,1,100);
-//        light.position.set(50,50,50);
-//        scene.add(light);
+            var light = new THREE.DirectionalLight(0xc96c1c, 10);
+
+
+            //        var lightAxis = new THREE.AxisHelper(50);
+            //        light.add(lightAxis);
+            light.position.set(x, y, z);
+
+
+            return light;
+
+
+        }
+
+
+        function makeLightHelper(light) {
+
+          
+            var helper = new THREE.DirectionalLightHelper(light, 5);
+            return helper;
+
+
+        }
+
+
+
+
+
         //
         //                function makeLight(hex, intensity, distance,x,y,z){
         //                   var light = new THREE.PointLight ( hex, intensity, distance,x,y,z);
