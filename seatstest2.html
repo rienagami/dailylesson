@@ -117,8 +117,10 @@
             //スクリーンと座席の肩の丸みをシーンに追加
 //**************************************************************************************************
             scene.add(makeScreen(0, 200, -2500));
+            scene.add(makeRoomBox(0,200,0));
             //ここで表示させる＆場所を指定
-            scene.add(makeWall(-700, 150, 0));
+//            scene.add(makeWall(-700, 150, 0));
+//            scene.add(makeWall(700,150,0));
 
             //            scene.add(makeWall(-500,0,0));
             //            scene.add(light(0xffd687, 10, 10,0,0,0));
@@ -798,7 +800,7 @@
 //            console.log (screenHeight);
             var thetaStart = -standardLength/2;
             
-            //            screenGroup.add(makeScreenSeat(900,600,64,64));
+            //            screenGroup.add(makeScreenSeat(900,600,64,64));   //radiusは半径！！！
             screenGroup.add(makeScreenSeat(radius, radius, screenHeight, 64, 64, true,thetaStart, standardLength));
             screenGroup.position.set(x, y, z);
             return screenGroup;
@@ -943,27 +945,40 @@
         //        
 
         //壁を作る
-
         
-            var makeSideWallGeo = new THREE.PlaneBufferGeometry(1600, 900 , 64, 64);
-            var makeSideWallMtl = new THREE.MeshNormalMaterial();
+        var makeRoomBoxGeo = new THREE.BoxBufferGeometry(1500,900,1500);
+            var makeRoomBoxMtl = new THREE.MeshNormalMaterial({side:1});
         
-        function makeSideWall() {
-            var wall = new THREE.Mesh(makeSideWallGeo, makeSideWallMtl);
-            wall.rotation.y = Math.PI * 0.5;
-            return wall;
+        function makeRoomBox(x,y,z) {
+            var room = new THREE.Mesh(makeRoomBoxGeo, makeRoomBoxMtl);
+            room.position.set(x,y,z);
+//            wall.rotation.y = Math.PI * 0.5;
+            return room;
 
         }
-
-        //ここで合体
-
-        function makeWall(x, y, z) {
-            var wallGroup = new THREE.Group();
-            wallGroup.add(makeSideWall());
-            wallGroup.position.set(x, y, z);
-            return wallGroup;
-
-        }
+        
+        
+ 
+        
+//            var makeSideWallGeo = new THREE.BoxBufferGeometry(2000,1500,4000);
+//            var makeSideWallMtl = new THREE.MeshNormalMaterial({side:1});
+//        
+//        function makeSideWall() {
+//            var wall = new THREE.Mesh(makeSideWallGeo, makeSideWallMtl);
+////            wall.rotation.y = Math.PI * 0.5;
+//            return wall;
+//
+//        }
+//
+//        //ここで合体
+//
+//        function makeWall(x, y, z) {
+//            var wallGroup = new THREE.Group();
+//            wallGroup.add(makeSideWall());
+//            wallGroup.position.set(x, y, z);
+//            return wallGroup;
+//
+//        }
     </script>
 
 
