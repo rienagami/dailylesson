@@ -74,6 +74,8 @@
                 scene.add(makeChair(-196 + 24.5 * i, 45, -120));
                 scene.add(makeChair(-196 + 24.5 * i, 60, -160));
 
+                
+                //後ろのブロックセンター
                 scene.add(makeChair(-196 + 24.5 * i, 120, -320));
                 scene.add(makeChair(-196 + 24.5 * i, 135, -360));
                 scene.add(makeChair(-196 + 24.5 * i, 150, -400));
@@ -116,19 +118,52 @@
 
             //スクリーンと座席の肩の丸みをシーンに追加
             //**************************************************************************************************
-            scene.add(makeScreen(0, 200, -2500));
-            scene.add(makeRoomBox(0, 200, 0));
+            scene.add(makeScreen(0, 250, -2800));
+            scene.add(makeRoomBox(0, 249, 0));
             var dirLight = makeLight(0, 230, 500);
             scene.add(dirLight);
-            scene.add(makeLightHelper(dirLight));
+//            scene.add(makeLightHelper(dirLight));
             scene.add(ceilingMain(0, 649, 0));
+            
+//             scene.add(ceilingMain(0, 649, 0));
+            //            scene.add(makeCeilingLight(0,648,0));
 
 
 
             //for文で繰り返し処理
+
+            for (var j = 0; j < 6; j += 1) {
+
+                for (var h = 0; h < 8; h += 1) {
+                    scene.add(makeCeilingLight(-500 + 150 * h, 648,  120*j-360));
+
+                }
+            }
+            
+            
+            for (var l =0; l < 9; l +=1){
+                scene.add(makeCeilingLight(-200+50 * l , 648 , -450))
+            }
+
+//            for (var h = 0; h < 8; h += 1) {
+//                scene.add(makeCeilingLight(-500 + 150 * h, 648, 200));
+//
+//            }
+//
+//            for (var h = 0; h < 8; h += 1) {
+//                scene.add(makeCeilingLight(-500 + 150 * h, 648, 300));
+//
+//            }
+
+
+
+
+
+
             for (var h = 0; h < 8; h += 1) {
                 scene.add(makeChair(-275 + -24.5 * h, 30, -80));
                 scene.add(makeChair(275 + 24.5 * h, 30, -80));
+
 
             }
 
@@ -187,13 +222,13 @@
             //カメラの位置の設定
             camera.position.set(0, 400, -800);
             //            camera.position.set(60, 30, 100);
-            //カメラの上ベクトルの設定
-            camera.lookAt({
-                x: 0,
-                y: 0,
-                z: 0
-
-            });
+//            //カメラの上ベクトルの設定
+//            camera.lookAt({
+//                x: 0,
+//                y: 500,
+//                z: 0
+//
+//            });
 
             trackball = new THREE.TrackballControls(camera, canvasFrame);
 
@@ -215,7 +250,7 @@
             //トラックボールのカメラ中心移動の無効化と中心速度の設定
             trackball.noPan = false;
             trackball.panSpeed = 1.0;
-            trackball.target = new THREE.Vector3(0, 0, 0);
+            trackball.target = new THREE.Vector3(0, 300, 0);
 
             //トラックボールのスタティックムーブの有効化
             trackball.staticMoving = true;
@@ -231,7 +266,7 @@
 
         function initObject() {
             axis = new THREE.AxisHelper(100);
-            scene.add(axis);
+//            scene.add(axis);
             //            axis.position.set(0, 0, 0);
         }
 
@@ -444,11 +479,45 @@
 
         function ceilingMain(x, y, z) {
             var ceilingGroup = new THREE.Group();
-            ceilingGroup.add(makeCeiling(1500, 1500, 1, 1));
+            ceilingGroup.add(makeCeiling(1500, 1000, 1, 1));
             ceilingGroup.position.set(x, y, z);
 
             return ceilingGroup;
         }
+
+
+
+
+
+
+        //天井の照明を作る！
+
+
+        var loaderLight = new THREE.TextureLoader();
+        var TextureLight = loader.load('img/white-glow.png');
+
+
+
+        var makeCeilingLightGeo = new THREE.PlaneBufferGeometry(20, 20, 1, 1);
+        var makeCeilingLightMtl = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: TextureLight,
+            specularMap: 0xcccccc,
+            transparent: true
+        });
+
+
+        function makeCeilingLight(x, y, z) {
+            var ceilingLight = new THREE.Mesh(makeCeilingLightGeo, makeCeilingLightMtl);
+            ceilingLight.rotation.x = Math.PI * 0.5;
+//            var CeilingAxis = new THREE.AxisHelper(50);
+//            ceilingLight.add(CeilingAxis);
+            ceilingLight.position.set(x, y, z);
+
+            return ceilingLight;
+
+        }
+
 
 
 
@@ -782,10 +851,26 @@
         textureVideo.minFilter = THREE.LinearFilter;
 
         textureVideo.format = THREE.RGBFormat;
+        
+        
+        //キングスマン
+//        
+//        var video = document.createElement('video');
+//        video.src = 'video/Kingsman_ The Golden Circle.mp4'
+//        video.loop = true;
+//        video.load();
+//        video.play();
+//
+//
+//        var textureVideo = new THREE.VideoTexture(video);
+//        textureVideo.magFilter = THREE.LinearFilter;
+//        textureVideo.minFilter = THREE.LinearFilter;
+//
+//        textureVideo.format = THREE.RGBFormat;
 
 
 
-        //足元のライトをポイントライトで
+        //スクリーンからディレクショナルライトで
 
         function makeLight(x, y, z) {
 
@@ -820,7 +905,7 @@
         var mapTextureWall = loader.load('img/wall.png');
 
 
-        var makeRoomBoxGeo = new THREE.BoxBufferGeometry(1500, 900, 1500);
+        var makeRoomBoxGeo = new THREE.BoxBufferGeometry(1500, 800, 1000);
         var makeRoomBoxMtl = new THREE.MeshBasicMaterial({
             side: 1,
             color: 0xffffff,
@@ -837,6 +922,15 @@
             return room;
 
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
     </script>
 
 
