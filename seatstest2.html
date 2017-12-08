@@ -74,7 +74,7 @@
                 scene.add(makeChair(-196 + 24.5 * i, 45, -120));
                 scene.add(makeChair(-196 + 24.5 * i, 60, -160));
 
-                
+
                 //後ろのブロックセンター
                 scene.add(makeChair(-196 + 24.5 * i, 120, -320));
                 scene.add(makeChair(-196 + 24.5 * i, 135, -360));
@@ -122,10 +122,30 @@
             scene.add(makeRoomBox(0, 249, 0));
             var dirLight = makeLight(0, 230, 500);
             scene.add(dirLight);
-//            scene.add(makeLightHelper(dirLight));
+            //            scene.add(makeLightHelper(dirLight));
             scene.add(ceilingMain(0, 649, 0));
-            
-//             scene.add(ceilingMain(0, 649, 0));
+            scene.add(makeFloor0(0, -131, 0));
+            scene.add(makeFloor1(0, 8, -477.5));
+            scene.add(makeFloor2(0,1,-435));
+            scene.add(makeFloor3(0,2,-395));
+            scene.add(makeFloor4(0,1,-355));
+            scene.add(makeFloor5(0,-4,-315));
+            scene.add(makeFloor6(0,-11,-275));
+            scene.add(makeFloor7(0,-26,-235));
+            scene.add(makeFloor8(0,-36,-195));
+            scene.add(makeFloor9(0,-52,-155));
+            scene.add(makeFloor10(0,-57,-115));
+            scene.add(makeFloor11(0,-59,-75));
+            scene.add(makeFloor12(0,-62,-35));
+            scene.add(makeFloor13(0,-77,5));
+            scene.add(makeFloor14(0,-87,45));
+            scene.add(makeFloor15(0,-97,160));
+            scene.add(makeFloor16(0,-97,205));
+            scene.add(makeFloor17(0,-97,250));
+            scene.add(makeEmergency1(-749,120,80));
+            scene.add(makeEmergency2(749,120,80));
+            scene.add(makeFootLight(-250,50,100));
+            //             scene.add(ceilingMain(0, 649, 0));
             //            scene.add(makeCeilingLight(0,648,0));
 
 
@@ -135,25 +155,25 @@
             for (var j = 0; j < 6; j += 1) {
 
                 for (var h = 0; h < 8; h += 1) {
-                    scene.add(makeCeilingLight(-500 + 150 * h, 648,  120*j-360));
+                    scene.add(makeCeilingLight(-500 + 150 * h, 648, 120 * j - 360));
 
                 }
             }
-            
-            
-            for (var l =0; l < 9; l +=1){
-                scene.add(makeCeilingLight(-200+50 * l , 648 , -450))
+
+
+            for (var l = 0; l < 9; l += 1) {
+                scene.add(makeCeilingLight(-200 + 50 * l, 648, -450))
             }
 
-//            for (var h = 0; h < 8; h += 1) {
-//                scene.add(makeCeilingLight(-500 + 150 * h, 648, 200));
-//
-//            }
-//
-//            for (var h = 0; h < 8; h += 1) {
-//                scene.add(makeCeilingLight(-500 + 150 * h, 648, 300));
-//
-//            }
+            //            for (var h = 0; h < 8; h += 1) {
+            //                scene.add(makeCeilingLight(-500 + 150 * h, 648, 200));
+            //
+            //            }
+            //
+            //            for (var h = 0; h < 8; h += 1) {
+            //                scene.add(makeCeilingLight(-500 + 150 * h, 648, 300));
+            //
+            //            }
 
 
 
@@ -220,15 +240,16 @@
             camera = new THREE.PerspectiveCamera(45, canvasFrame.clientWidth / canvasFrame.clientHeight, 1, 10000);
 
             //カメラの位置の設定
-            camera.position.set(0, 400, -800);
+            camera.position.set(1000, 180, -450);
+//             camera.position.set(0, 400, -800);
             //            camera.position.set(60, 30, 100);
-//            //カメラの上ベクトルの設定
-//            camera.lookAt({
-//                x: 0,
-//                y: 500,
-//                z: 0
-//
-//            });
+            //            //カメラの上ベクトルの設定
+            //            camera.lookAt({
+            //                x: 0,
+            //                y: 500,
+            //                z: 0
+            //
+            //            });
 
             trackball = new THREE.TrackballControls(camera, canvasFrame);
 
@@ -266,7 +287,7 @@
 
         function initObject() {
             axis = new THREE.AxisHelper(100);
-//            scene.add(axis);
+            //            scene.add(axis);
             //            axis.position.set(0, 0, 0);
         }
 
@@ -510,11 +531,39 @@
         function makeCeilingLight(x, y, z) {
             var ceilingLight = new THREE.Mesh(makeCeilingLightGeo, makeCeilingLightMtl);
             ceilingLight.rotation.x = Math.PI * 0.5;
-//            var CeilingAxis = new THREE.AxisHelper(50);
-//            ceilingLight.add(CeilingAxis);
+            
+            //            var CeilingAxis = new THREE.AxisHelper(50);
+            //            ceilingLight.add(CeilingAxis);
             ceilingLight.position.set(x, y, z);
 
             return ceilingLight;
+
+        }
+        
+        
+        //足元のライト(後日に回す)
+        
+        
+        var makeFootLightGeo = new THREE.PlaneBufferGeometry(10, 10, 1, 1);
+        var makeFootLightMtl = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            map: TextureLight,
+            specularMap: 0xcccccc,
+            transparent: true,
+            side:1
+        });
+
+
+        function makeFootLight(x, y, z) {
+            var footLight = new THREE.Mesh(makeFootLightGeo, makeFootLightMtl);
+            footLight.rotation.x = Math.PI * 0.5;
+            footLight.rotation.z = Math.PI * 1;
+            
+            //            var CeilingAxis = new THREE.AxisHelper(50);
+            //            ceilingLight.add(CeilingAxis);
+            footLight.position.set(x, y, z);
+
+            return footLight;
 
         }
 
@@ -851,22 +900,22 @@
         textureVideo.minFilter = THREE.LinearFilter;
 
         textureVideo.format = THREE.RGBFormat;
-        
-        
+
+
         //キングスマン
-//        
-//        var video = document.createElement('video');
-//        video.src = 'video/Kingsman_ The Golden Circle.mp4'
-//        video.loop = true;
-//        video.load();
-//        video.play();
-//
-//
-//        var textureVideo = new THREE.VideoTexture(video);
-//        textureVideo.magFilter = THREE.LinearFilter;
-//        textureVideo.minFilter = THREE.LinearFilter;
-//
-//        textureVideo.format = THREE.RGBFormat;
+        //        
+        //        var video = document.createElement('video');
+        //        video.src = 'video/Kingsman_ The Golden Circle.mp4'
+        //        video.loop = true;
+        //        video.load();
+        //        video.play();
+        //
+        //
+        //        var textureVideo = new THREE.VideoTexture(video);
+        //        textureVideo.magFilter = THREE.LinearFilter;
+        //        textureVideo.minFilter = THREE.LinearFilter;
+        //
+        //        textureVideo.format = THREE.RGBFormat;
 
 
 
@@ -897,6 +946,13 @@
 
         }
 
+        
+        
+        
+        
+        
+        
+        
 
         //壁を作る
 
@@ -922,14 +978,386 @@
             return room;
 
         }
+
+
+        //床を作る
+
+
+        //床のテクスチャ
+
+        var imaxFloor = new THREE.TextureLoader();
+        var mapTextureFloor = loader.load('img/floor.png')
+
+        var makeFloor0BoxGeo = new THREE.BoxBufferGeometry(1500, 40, 1000);
+        var makeFloor0BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor0(x, y, z) {
+            var floor = new THREE.Mesh(makeFloor0BoxGeo, makeFloor0BoxMtl);
+            floor.position.set(x, y, z);
+            return floor;
+        }
+
+
+        //一番奥の床
+        
+        
+
+        
+        //奥から1
+        var makeFloor1BoxGeo = new THREE.BoxBufferGeometry(1500, 315, 45);
+        var makeFloor1BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor1(x, y, z) {
+            var floor1 = new THREE.Mesh(makeFloor1BoxGeo, makeFloor1BoxMtl);
+            floor1.position.set(x, y, z);
+            return floor1;
+        }
+
+         
+        
+        //奥から2
+        var makeFloor2BoxGeo = new THREE.BoxBufferGeometry(1500, 300, 40);
+        var makeFloor2BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor2(x, y, z) {
+            var floor2 = new THREE.Mesh(makeFloor2BoxGeo, makeFloor2BoxMtl);
+            floor2.position.set(x, y, z);
+            return floor2;
+        }
+
+   
+         //奥から3
+        var makeFloor3BoxGeo = new THREE.BoxBufferGeometry(1500, 270, 40);
+        var makeFloor3BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor3(x, y, z) {
+            var floor3 = new THREE.Mesh(makeFloor3BoxGeo, makeFloor3BoxMtl);
+            floor3.position.set(x, y, z);
+            return floor3;
+        }
+
+        
+           //奥から4
+        var makeFloor4BoxGeo = new THREE.BoxBufferGeometry(1500, 240, 40);
+        var makeFloor4BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor4(x, y, z) {
+            var floor4 = new THREE.Mesh(makeFloor4BoxGeo, makeFloor4BoxMtl);
+            floor4.position.set(x, y, z);
+            return floor4;
+        }
         
         
         
         
+//        
+             //奥から5
+        var makeFloor5BoxGeo = new THREE.BoxBufferGeometry(1500, 220, 40);
+        var makeFloor5BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor5(x, y, z) {
+            var floor5 = new THREE.Mesh(makeFloor5BoxGeo, makeFloor5BoxMtl);
+            floor5.position.set(x, y, z);
+            return floor5;
+        }
+
+        
+        
+              //奥から6
+        var makeFloor6BoxGeo = new THREE.BoxBufferGeometry(1500, 210, 50);
+        var makeFloor6BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor6(x, y, z) {
+            var floor6 = new THREE.Mesh(makeFloor6BoxGeo, makeFloor6BoxMtl);
+            floor6.position.set(x, y, z);
+            return floor6;
+        }
+   
+        
+                //奥から7
+        var makeFloor7BoxGeo = new THREE.BoxBufferGeometry(1500, 210, 45);
+        var makeFloor7BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor7(x, y, z) {
+            var floor7 = new THREE.Mesh(makeFloor7BoxGeo, makeFloor7BoxMtl);
+            floor7.position.set(x, y, z);
+            return floor7;
+        }
+   
+        
+                   //奥から8
+        var makeFloor8BoxGeo = new THREE.BoxBufferGeometry(1500, 200, 45);
+        var makeFloor8BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor8(x, y, z) {
+            var floor8 = new THREE.Mesh(makeFloor8BoxGeo, makeFloor8BoxMtl);
+            floor8.position.set(x, y, z);
+            return floor8;
+        }
+   
+        
+                    //奥から9
+        var makeFloor9BoxGeo = new THREE.BoxBufferGeometry(1500, 195, 45);
+        var makeFloor9BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor9(x, y, z) {
+            var floor9 = new THREE.Mesh(makeFloor9BoxGeo, makeFloor9BoxMtl);
+            floor9.position.set(x, y, z);
+            return floor9;
+        }
+        
+        
+                    //奥から10
+        var makeFloor10BoxGeo = new THREE.BoxBufferGeometry(1500, 175, 45);
+        var makeFloor10BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor10(x, y, z) {
+            var floor10 = new THREE.Mesh(makeFloor10BoxGeo, makeFloor10BoxMtl);
+            floor10.position.set(x, y, z);
+            return floor10;
+        }
+        
+             //奥から11
+        var makeFloor11BoxGeo = new THREE.BoxBufferGeometry(1500, 150, 45);
+        var makeFloor11BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor11(x, y, z) {
+            var floor11 = new THREE.Mesh(makeFloor11BoxGeo, makeFloor11BoxMtl);
+            floor11.position.set(x, y, z);
+            return floor11;
+        }
+        
+              //奥から12
+        var makeFloor12BoxGeo = new THREE.BoxBufferGeometry(1500, 125, 45);
+        var makeFloor12BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor12(x, y, z) {
+            var floor12 = new THREE.Mesh(makeFloor12BoxGeo, makeFloor12BoxMtl);
+            floor12.position.set(x, y, z);
+            return floor12;
+        }
+        
+        
+            //奥から13
+        var makeFloor13BoxGeo = new THREE.BoxBufferGeometry(1500, 125, 45);
+        var makeFloor13BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor13(x, y, z) {
+            var floor13 = new THREE.Mesh(makeFloor13BoxGeo, makeFloor13BoxMtl);
+            floor13.position.set(x, y, z);
+            return floor13;
+        }
+        
+        
+             //奥から14
+        var makeFloor14BoxGeo = new THREE.BoxBufferGeometry(1500, 115, 200);
+        var makeFloor14BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor14(x, y, z) {
+            var floor14 = new THREE.Mesh(makeFloor14BoxGeo, makeFloor14BoxMtl);
+            floor14.position.set(x, y, z);
+            return floor14;
+        }
+        
+        
+        
+         //奥から15
+        var makeFloor15BoxGeo = new THREE.BoxBufferGeometry(1500, 105, 45);
+        var makeFloor15BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor15(x, y, z) {
+            var floor15 = new THREE.Mesh(makeFloor15BoxGeo, makeFloor15BoxMtl);
+            floor15.position.set(x, y, z);
+            return floor15;
+        }
+        
+        
+            //奥から16
+        var makeFloor16BoxGeo = new THREE.BoxBufferGeometry(1500, 75, 45);
+        var makeFloor16BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor16(x, y, z) {
+            var floor16 = new THREE.Mesh(makeFloor16BoxGeo, makeFloor16BoxMtl);
+            floor16.position.set(x, y, z);
+            return floor16;
+        }
+        
+        //奥から17
+        var makeFloor17BoxGeo = new THREE.BoxBufferGeometry(1500, 5, 45);
+        var makeFloor17BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor17(x, y, z) {
+            var floor17 = new THREE.Mesh(makeFloor17BoxGeo, makeFloor17BoxMtl);
+            floor17.position.set(x, y, z);
+            return floor17;
+        }
         
         
         
         
+        //非常口
+
+        //上手
+    
+        var imaxEmergency = new THREE.TextureLoader();
+        var mapTextureEmergrncy = loader.load('img/emergency.png')
+
+        
+        var makeEmergencyPlaneGeo = new THREE.PlaneBufferGeometry(40, 20, 1, 1);
+        var makeEmergencyPlaneMtl = new THREE.MeshBasicMaterial({
+            side: 2,
+            color: 0xffffff,
+            map: mapTextureEmergrncy,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeEmergency1(x, y, z) {
+            var emergency = new THREE.Mesh(makeEmergencyPlaneGeo, makeEmergencyPlaneMtl);
+            emergency.rotation.y = Math.PI * 0.5;
+            emergency.position.set(x, y, z);
+            return emergency;
+        }
+        
+        
+        
+        //下手
+         var imaxEmergency = new THREE.TextureLoader();
+        var mapTextureEmergrncy = loader.load('img/emergency.png')
+
+        
+        var makeEmergencyPlaneGeo = new THREE.PlaneBufferGeometry(40, 20, 1, 1);
+        var makeEmergencyPlaneMtl = new THREE.MeshBasicMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureEmergrncy,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeEmergency2(x, y, z) {
+            var emergency = new THREE.Mesh(makeEmergencyPlaneGeo, makeEmergencyPlaneMtl);
+            emergency.rotation.y = Math.PI * 1.5;
+            emergency.position.set(x, y, z);
+            return emergency;
+        }
+        
+
+
+
+
+//        
+//        
+//        
+//        
         
     </script>
 
