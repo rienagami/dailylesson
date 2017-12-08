@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>映画館を作る！</title>
+    <script src="js/jquery-2.1.3.min.js"></script>
+
+    <script>
+
+        function output(num){
+            
+            $.ajax({
+                url:"data"+num+".csv"
+            }).done(function(result){
+                var tmp_ary = result.split("\n");
+                console.log(tmp_ary);
+                for(var i =0; i <tmp_ary.length; i++){
+                    $("#output_zone").append(tmp_ary[i]).append("<br>");
+                }
+ 
+            }).fail(function(data){
+                console.log(data);
+            });
+        }
+        
+        
+        function output_json(){
+            $.getJSON("seatData.json",function(json){
+                console.log(json)
+            })
+        }
+
+        
+   
+        
+        
+        
+        
+    
+    
+    
+    </script>    
+</head>
+
+<body>
+
+  <input type="button" onClick="output_json()" value="output_data_json">
+  
+  <div id="output_zone"></div>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+</body>
+</html>

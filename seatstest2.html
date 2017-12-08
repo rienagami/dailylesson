@@ -14,6 +14,7 @@
             margin: 0px
         }
 
+
         div#canvas-frame {
             width: 1200px;
             height: 700px;
@@ -45,6 +46,59 @@
             light;
 
 
+        //        var mouse = new THREE.Vector2();
+
+
+        
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //オブジェクトの選択を実装したい！！！！！！
+
+//        var projector = new THREE.Projector();
+//        //マウスのグローバル変数
+//        var mouse = {
+//            x: 0,
+//            y: 0
+//        };
+//        //オブジェクト格納グローバル変数
+//        var targetList = [];
+//
+//        //マウスが押された時
+//        window.onmousedown = function(ev) {
+//            if (ev.target == renderer.domElement) {
+//                //マウス座標2D変換
+//                var rect = ev.target.getBoundingClientRect();
+//                mouse.x = ev.clientX - rect.left;
+//                mouse.y = ev.clientY - rect.top;
+//
+//                //マウス座標３D変換widthやheightは画面サイズ
+//                mouse.x = (mouse.x / width) * 2 - 1;
+//                mouse.y = (mouse.y / height) * 2 + 1;
+//
+//                //マウスベクトル
+//                var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+//
+//                //vectorはスクリーン座標系なので、オブジェクトの座標系に変換
+//                projector.unprojectVector(vector, camera);
+//
+//                //始点,向きベクトルを渡してレイを作成
+//                var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+//
+//
+//                //クリック判定
+//                var obj = ray.intersectObjects(targetList);
+//
+//                //クリックしていたら、alertを表示
+//                if (obj.length > 0) {
+//                    alert("click!")
+//                }
+//
+//            }
+//        };
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
         function initThree() {
             //キャンバスフレームDOM要素の取得
             canvasFrame = document.getElementById('canvas-frame');
@@ -62,6 +116,30 @@
 
             //レンダラークリアカラーの設定
             renderer.setClearColor(0xb1b1b1, 1.0);
+
+
+
+
+            //            ////            ピッキングの実装！
+            //            function onDocumentMouseDown(event) {
+            //                var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 - 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+            //                vector = vector.unproject(camera);
+            //
+            //                var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            //
+            //
+            //                var intersects = raycaster.intersectObjects([sphere, cylinder, cube]);
+            //
+            //                if (intersects.lengh > 0) {
+            //                    intersects[0].object.material.transparent = true;
+            //                    intersects[0].object.material.opacity = 0.1;
+            //                    _
+            //                }
+            //            }
+
+
+
+
 
             //シーンオブジェクトの生成
             scene = new THREE.Scene();
@@ -126,28 +204,42 @@
             scene.add(ceilingMain(0, 649, 0));
             scene.add(makeFloor0(0, -131, 0));
             scene.add(makeFloor1(0, 8, -477.5));
-            scene.add(makeFloor2(0,1,-435));
-            scene.add(makeFloor3(0,2,-395));
-            scene.add(makeFloor4(0,1,-355));
-            scene.add(makeFloor5(0,-4,-315));
-            scene.add(makeFloor6(0,-11,-275));
-            scene.add(makeFloor7(0,-26,-235));
-            scene.add(makeFloor8(0,-36,-195));
-            scene.add(makeFloor9(0,-52,-155));
-            scene.add(makeFloor10(0,-57,-115));
-            scene.add(makeFloor11(0,-59,-75));
-            scene.add(makeFloor12(0,-62,-35));
-            scene.add(makeFloor13(0,-77,5));
-            scene.add(makeFloor14(0,-87,45));
-            scene.add(makeFloor15(0,-97,160));
-            scene.add(makeFloor16(0,-97,205));
-            scene.add(makeFloor17(0,-97,250));
-            scene.add(makeEmergency1(-749,120,80));
-            scene.add(makeEmergency2(749,120,80));
-            scene.add(makeFootLight(-250,50,100));
-            //             scene.add(ceilingMain(0, 649, 0));
-            //            scene.add(makeCeilingLight(0,648,0));
+            scene.add(makeFloor2(0, 1, -435));
+            scene.add(makeFloor3(0, 2, -395));
+            scene.add(makeFloor4(0, 1, -355));
+            scene.add(makeFloor5(0, -4, -315));
+            scene.add(makeFloor6(0, -11, -275));
+            scene.add(makeFloor7(0, -26, -235));
+            scene.add(makeFloor8(0, -36, -195));
+            scene.add(makeFloor9(0, -52, -155));
+            scene.add(makeFloor10(0, -57, -115));
+            scene.add(makeFloor11(0, -59, -75));
+            scene.add(makeFloor12(0, -62, -35));
+            scene.add(makeFloor13(0, -77, 5));
+            scene.add(makeFloor14(0, -87, 45));
+            scene.add(makeFloor15(0, -97, 160));
+            scene.add(makeFloor16(0, -97, 200));
+            scene.add(makeFloor17(0, -97, 240));
+            scene.add(makeFloor18(0, -105, 280));
 
+
+            scene.add(makeEmergency1(-749, 120, 80));
+            scene.add(makeEmergency2(749, 120, 80));
+
+            scene.add(makeFootLight(-250, 50, 100));
+
+            scene.add(makePole1(0, -10, 130));
+            scene.add(makePole1(0, -25, 130));
+
+            scene.add(makePole1(-650, -10, 130));
+            scene.add(makePole1(-650, -25, 130));
+            
+            scene.add(makePoleBack(-650,100,-130));
+
+
+
+
+            //            scene.add(makePole2(0,-20,130));
 
 
             //for文で繰り返し処理
@@ -195,6 +287,11 @@
             }
 
 
+            for (var p = 0; p < 11; p += 1) {
+                scene.add(makePole2(-250 + 50 * p, -20, 130));
+                scene.add(makePole1(-750, 400 + 30, -45 * p));
+
+            }
 
 
             for (var n = 0; n < 9; n += 1) {
@@ -233,6 +330,54 @@
 
         }
 
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//        targetList.push(makeChair);
+//        targetList.push(makeExChair);
+//        targetList.push(makeAccessibleChair);
+//
+//        //1マウス座標の取得
+//        document.addEventListener('mousemove', function(e) {
+//            var rect = e.target.getBoundingClientRect();
+//
+//
+//            //2WebGLの座標系に変換
+//
+//            mouse.x = (e.clientX - rect.left) / width * 2 - 1;
+//            mouse.y = (e.clientY - rect.top) / height * -1 * 2 + 1;
+//
+//        });
+//
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+        //        function render(){
+        //            var raycaster = new THREE.Raycaster();
+        //            var objs;
+        //            
+        //            requestAnimationFrame(render);
+        //        
+        //        //3マウスから３D空間に光線を射出
+        //        raycaster.setFromCamera(mouse,camera);
+        //            
+        //            
+        //        
+        //        //4光線にあたった物体を取得、操作
+        //            objs = raycaster.intersectObjects(scene.children);
+        //            if(objs.lengh>0){
+        //                
+        //                objs[0].object.material.emissive = new THREE.Color(0x999999);
+        //                
+        //            }
+        //            
+        //            controls.update();
+        //            renderer.render(scene,camera);
+        //            
+        //}
         //カメラ初期化関数の定義
         var camera;
 
@@ -241,7 +386,7 @@
 
             //カメラの位置の設定
             camera.position.set(1000, 180, -450);
-//             camera.position.set(0, 400, -800);
+            //             camera.position.set(0, 400, -800);
             //            camera.position.set(60, 30, 100);
             //            //カメラの上ベクトルの設定
             //            camera.lookAt({
@@ -531,7 +676,7 @@
         function makeCeilingLight(x, y, z) {
             var ceilingLight = new THREE.Mesh(makeCeilingLightGeo, makeCeilingLightMtl);
             ceilingLight.rotation.x = Math.PI * 0.5;
-            
+
             //            var CeilingAxis = new THREE.AxisHelper(50);
             //            ceilingLight.add(CeilingAxis);
             ceilingLight.position.set(x, y, z);
@@ -539,18 +684,18 @@
             return ceilingLight;
 
         }
-        
-        
+
+
         //足元のライト(後日に回す)
-        
-        
+
+
         var makeFootLightGeo = new THREE.PlaneBufferGeometry(10, 10, 1, 1);
         var makeFootLightMtl = new THREE.MeshBasicMaterial({
             color: 0xffffff,
             map: TextureLight,
             specularMap: 0xcccccc,
             transparent: true,
-            side:1
+            side: 1
         });
 
 
@@ -558,7 +703,7 @@
             var footLight = new THREE.Mesh(makeFootLightGeo, makeFootLightMtl);
             footLight.rotation.x = Math.PI * 0.5;
             footLight.rotation.z = Math.PI * 1;
-            
+
             //            var CeilingAxis = new THREE.AxisHelper(50);
             //            ceilingLight.add(CeilingAxis);
             footLight.position.set(x, y, z);
@@ -946,13 +1091,13 @@
 
         }
 
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
 
         //壁を作る
 
@@ -1005,10 +1150,10 @@
 
 
         //一番奥の床
-        
-        
 
-        
+
+
+
         //奥から1
         var makeFloor1BoxGeo = new THREE.BoxBufferGeometry(1500, 315, 45);
         var makeFloor1BoxMtl = new THREE.MeshPhongMaterial({
@@ -1025,8 +1170,8 @@
             return floor1;
         }
 
-         
-        
+
+
         //奥から2
         var makeFloor2BoxGeo = new THREE.BoxBufferGeometry(1500, 300, 40);
         var makeFloor2BoxMtl = new THREE.MeshPhongMaterial({
@@ -1043,8 +1188,8 @@
             return floor2;
         }
 
-   
-         //奥から3
+
+        //奥から3
         var makeFloor3BoxGeo = new THREE.BoxBufferGeometry(1500, 270, 40);
         var makeFloor3BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1060,8 +1205,8 @@
             return floor3;
         }
 
-        
-           //奥から4
+
+        //奥から4
         var makeFloor4BoxGeo = new THREE.BoxBufferGeometry(1500, 240, 40);
         var makeFloor4BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1076,12 +1221,12 @@
             floor4.position.set(x, y, z);
             return floor4;
         }
-        
-        
-        
-        
-//        
-             //奥から5
+
+
+
+
+        //        
+        //奥から5
         var makeFloor5BoxGeo = new THREE.BoxBufferGeometry(1500, 220, 40);
         var makeFloor5BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1097,9 +1242,9 @@
             return floor5;
         }
 
-        
-        
-              //奥から6
+
+
+        //奥から6
         var makeFloor6BoxGeo = new THREE.BoxBufferGeometry(1500, 210, 50);
         var makeFloor6BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1114,9 +1259,9 @@
             floor6.position.set(x, y, z);
             return floor6;
         }
-   
-        
-                //奥から7
+
+
+        //奥から7
         var makeFloor7BoxGeo = new THREE.BoxBufferGeometry(1500, 210, 45);
         var makeFloor7BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1131,9 +1276,9 @@
             floor7.position.set(x, y, z);
             return floor7;
         }
-   
-        
-                   //奥から8
+
+
+        //奥から8
         var makeFloor8BoxGeo = new THREE.BoxBufferGeometry(1500, 200, 45);
         var makeFloor8BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1148,9 +1293,9 @@
             floor8.position.set(x, y, z);
             return floor8;
         }
-   
-        
-                    //奥から9
+
+
+        //奥から9
         var makeFloor9BoxGeo = new THREE.BoxBufferGeometry(1500, 195, 45);
         var makeFloor9BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1165,9 +1310,9 @@
             floor9.position.set(x, y, z);
             return floor9;
         }
-        
-        
-                    //奥から10
+
+
+        //奥から10
         var makeFloor10BoxGeo = new THREE.BoxBufferGeometry(1500, 175, 45);
         var makeFloor10BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1182,8 +1327,8 @@
             floor10.position.set(x, y, z);
             return floor10;
         }
-        
-             //奥から11
+
+        //奥から11
         var makeFloor11BoxGeo = new THREE.BoxBufferGeometry(1500, 150, 45);
         var makeFloor11BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1198,8 +1343,8 @@
             floor11.position.set(x, y, z);
             return floor11;
         }
-        
-              //奥から12
+
+        //奥から12
         var makeFloor12BoxGeo = new THREE.BoxBufferGeometry(1500, 125, 45);
         var makeFloor12BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1214,9 +1359,9 @@
             floor12.position.set(x, y, z);
             return floor12;
         }
-        
-        
-            //奥から13
+
+
+        //奥から13
         var makeFloor13BoxGeo = new THREE.BoxBufferGeometry(1500, 125, 45);
         var makeFloor13BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1231,9 +1376,9 @@
             floor13.position.set(x, y, z);
             return floor13;
         }
-        
-        
-             //奥から14
+
+
+        //奥から14
         var makeFloor14BoxGeo = new THREE.BoxBufferGeometry(1500, 115, 200);
         var makeFloor14BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1248,10 +1393,10 @@
             floor14.position.set(x, y, z);
             return floor14;
         }
-        
-        
-        
-         //奥から15
+
+
+
+        //奥から15
         var makeFloor15BoxGeo = new THREE.BoxBufferGeometry(1500, 105, 45);
         var makeFloor15BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1266,9 +1411,9 @@
             floor15.position.set(x, y, z);
             return floor15;
         }
-        
-        
-            //奥から16
+
+
+        //奥から16
         var makeFloor16BoxGeo = new THREE.BoxBufferGeometry(1500, 75, 45);
         var makeFloor16BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
@@ -1283,9 +1428,9 @@
             floor16.position.set(x, y, z);
             return floor16;
         }
-        
+
         //奥から17
-        var makeFloor17BoxGeo = new THREE.BoxBufferGeometry(1500, 5, 45);
+        var makeFloor17BoxGeo = new THREE.BoxBufferGeometry(1500, 45, 45);
         var makeFloor17BoxMtl = new THREE.MeshPhongMaterial({
             side: 0,
             color: 0xffffff,
@@ -1299,41 +1444,60 @@
             floor17.position.set(x, y, z);
             return floor17;
         }
-        
-        
-        
-        
+
+
+
+        //奥から18
+        var makeFloor18BoxGeo = new THREE.BoxBufferGeometry(1500, 25, 45);
+        var makeFloor18BoxMtl = new THREE.MeshPhongMaterial({
+            side: 0,
+            color: 0xffffff,
+            map: mapTextureFloor,
+            specularMap: 0xcccccc
+
+        });
+
+        function makeFloor18(x, y, z) {
+            var floor18 = new THREE.Mesh(makeFloor18BoxGeo, makeFloor18BoxMtl);
+            floor18.position.set(x, y, z);
+            return floor18;
+        }
+
+
+
         //非常口
 
-        //上手
-    
-        var imaxEmergency = new THREE.TextureLoader();
-        var mapTextureEmergrncy = loader.load('img/emergency.png')
-
         
-        var makeEmergencyPlaneGeo = new THREE.PlaneBufferGeometry(40, 20, 1, 1);
-        var makeEmergencyPlaneMtl = new THREE.MeshBasicMaterial({
-            side: 2,
+        
+        //上手
+
+        var imaxEmergency1 = new THREE.TextureLoader();
+        var mapTextureEmergrncy1 = loader.load('img/exit.png')
+
+
+        var makeEmergencyPlaneGeo1 = new THREE.PlaneBufferGeometry(40, 20, 1, 1);
+        var makeEmergencyPlaneMtl1 = new THREE.MeshBasicMaterial({
+            side: 0,
             color: 0xffffff,
-            map: mapTextureEmergrncy,
+            map: mapTextureEmergrncy1,
             specularMap: 0xcccccc
 
         });
 
         function makeEmergency1(x, y, z) {
-            var emergency = new THREE.Mesh(makeEmergencyPlaneGeo, makeEmergencyPlaneMtl);
-            emergency.rotation.y = Math.PI * 0.5;
-            emergency.position.set(x, y, z);
-            return emergency;
+            var emergency1 = new THREE.Mesh(makeEmergencyPlaneGeo1, makeEmergencyPlaneMtl1);
+            emergency1.rotation.y = Math.PI * 0.5;
+            emergency1.position.set(x, y, z);
+            return emergency1;
         }
-        
-        
-        
+
+
+
         //下手
-         var imaxEmergency = new THREE.TextureLoader();
+        var imaxEmergency = new THREE.TextureLoader();
         var mapTextureEmergrncy = loader.load('img/emergency.png')
 
-        
+
         var makeEmergencyPlaneGeo = new THREE.PlaneBufferGeometry(40, 20, 1, 1);
         var makeEmergencyPlaneMtl = new THREE.MeshBasicMaterial({
             side: 0,
@@ -1349,15 +1513,108 @@
             emergency.position.set(x, y, z);
             return emergency;
         }
+
+
+        //柵を作る
+
+        //横
+        function makePoleparts1(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength) {
+            var geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength);
+
+            var material = new THREE.MeshBasicMaterial({
+                color: 'black'
+            });
+
+            var pole1 = new THREE.Mesh(geometry, material);
+            pole1.rotation.z = Math.PI * -0.5;
+            return pole1;
+
+        }
+
+        function makePole1(x, y, z) {
+            var poleGroup1 = new THREE.Group();
+            poleGroup1.add(makePoleparts1(1, 1, 500, 64, 1, false, 0, 6.3));
+            poleGroup1.position.set(x, y, z);
+            return poleGroup1;
+
+        }
         
+        function makePoleBack(x, y, z) {
+            var poleGroup1 = new THREE.Group();
+            poleGroup1.add(makePoleparts1(1, 1, 250, 64, 1, false, 0, 6.3));
+            poleGroup1.position.set(x, y, z);
+            return poleGroup1;
+
+        }
 
 
 
 
-//        
-//        
-//        
-//        
+        //縦
+
+        function makePoleparts2(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength) {
+            var geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radiusSegments, heightSegments, openEnded, thetaStart, thetaLength);
+
+            var material = new THREE.MeshBasicMaterial({
+                color: 'black'
+            });
+
+
+
+            var pole2 = new THREE.Mesh(geometry, material);
+            return pole2;
+
+        }
+
+        function makePole2(x, y, z) {
+            var poleGroup2 = new THREE.Group();
+            poleGroup2.add(makePoleparts2(1, 1, 20, 64, 1, false, 0, 6.3));
+            poleGroup2.position.set(x, y, z);
+            return poleGroup2;
+
+        }
+
+        //        
+        //        
+        //        
+        //
+        ////オブジェクトを選択したい！！！何故できない！？
+        function onMouseMove(e){
+            
+            var rect = e.target.getBoundingClientRect();
+            
+            //スクリーン上のマウス位置を取得する
+            var mouseX = e.clientX - rect.left;
+            var mouseY = e.clientY - rect.top;
+            
+            //取得したスクリーン座標を-1〜1に正規化する（WebGLは-1〜1で座標が表現される)
+            mouseX = (mouseX/window.innerWidth) * 2 - 1;
+            mouseY = -(mouseY/window.innerHeight) * 2 + 1;
+            
+            //マウスの位置ベクトル
+            var pos = new THREE.Vector3(mouseX,mouseY,1);
+            
+            //posはスクリーン座標系なのでオブジェクトの座標系に変換
+            //オブジェクト座標系は今表示しているカメラからの視点なので第二引数にカメラオブジェクトを渡す。
+            //new THREE.Project.unprojectVector(pos,camera);↓最新版では下のような書き方になるらしい）
+            
+            pos.unproject(camera);
+            //始点、向きベクトルを渡してレイを作成
+            
+            var ray = new THREE.raycaster(camera.position,pos.sub(camera.position).normalize());
+            
+            //交差判定
+            //引数は取得対象となるMeshの配列を渡す。
+            var objs = ray.intersectObjects(scene.children);
+            
+            if(obj.length > 0){
+                //交差していたらobjsが1以上になるので、やりたいことをやる。
+                objs[0].object.position.x = 10;
+            }
+        }
+        
+        
+        
         
     </script>
 

@@ -1,0 +1,10 @@
+
+[
+    {"name":"A1","type":"normal","x":0,"y":0,"z":0},
+    {"name":"A2","type":"normal","x":10,"y":0,"z":0},
+    {"name":"A3","type":"normal","x":20,"y":0,"z":0},
+    {"name":"B1","type":"premiere","x":0,"y":10,"z":-10},
+    {"name":"B2","type":"premiere","x":10,"y":10,"z":-10},
+    {"name":"B3","type":"premiere","x":20,"y":10,"z":-10}
+    
+]
