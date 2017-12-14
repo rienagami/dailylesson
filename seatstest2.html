@@ -20,6 +20,7 @@
             height: 700px;
             overflow: hidden;
         }
+
     </style>
 
     <script>
@@ -49,53 +50,53 @@
         //        var mouse = new THREE.Vector2();
 
 
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         //オブジェクトの選択を実装したい！！！！！！
 
-//        var projector = new THREE.Projector();
-//        //マウスのグローバル変数
-//        var mouse = {
-//            x: 0,
-//            y: 0
-//        };
-//        //オブジェクト格納グローバル変数
-//        var targetList = [];
-//
-//        //マウスが押された時
-//        window.onmousedown = function(ev) {
-//            if (ev.target == renderer.domElement) {
-//                //マウス座標2D変換
-//                var rect = ev.target.getBoundingClientRect();
-//                mouse.x = ev.clientX - rect.left;
-//                mouse.y = ev.clientY - rect.top;
-//
-//                //マウス座標３D変換widthやheightは画面サイズ
-//                mouse.x = (mouse.x / width) * 2 - 1;
-//                mouse.y = (mouse.y / height) * 2 + 1;
-//
-//                //マウスベクトル
-//                var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
-//
-//                //vectorはスクリーン座標系なので、オブジェクトの座標系に変換
-//                projector.unprojectVector(vector, camera);
-//
-//                //始点,向きベクトルを渡してレイを作成
-//                var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
-//
-//
-//                //クリック判定
-//                var obj = ray.intersectObjects(targetList);
-//
-//                //クリックしていたら、alertを表示
-//                if (obj.length > 0) {
-//                    alert("click!")
-//                }
-//
-//            }
-//        };
+        //        var projector = new THREE.Projector();
+        //        //マウスのグローバル変数
+        //        var mouse = {
+        //            x: 0,
+        //            y: 0
+        //        };
+        //        //オブジェクト格納グローバル変数
+        //        var targetList = [];
+        //
+        //        //マウスが押された時
+        //        window.onmousedown = function(ev) {
+        //            if (ev.target == renderer.domElement) {
+        //                //マウス座標2D変換
+        //                var rect = ev.target.getBoundingClientRect();
+        //                mouse.x = ev.clientX - rect.left;
+        //                mouse.y = ev.clientY - rect.top;
+        //
+        //                //マウス座標３D変換widthやheightは画面サイズ
+        //                mouse.x = (mouse.x / width) * 2 - 1;
+        //                mouse.y = (mouse.y / height) * 2 + 1;
+        //
+        //                //マウスベクトル
+        //                var vector = new THREE.Vector3(mouse.x, mouse.y, 1);
+        //
+        //                //vectorはスクリーン座標系なので、オブジェクトの座標系に変換
+        //                projector.unprojectVector(vector, camera);
+        //
+        //                //始点,向きベクトルを渡してレイを作成
+        //                var ray = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+        //
+        //
+        //                //クリック判定
+        //                var obj = ray.intersectObjects(targetList);
+        //
+        //                //クリックしていたら、alertを表示
+        //                if (obj.length > 0) {
+        //                    alert("click!")
+        //                }
+        //
+        //            }
+        //        };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -116,6 +117,9 @@
 
             //レンダラークリアカラーの設定
             renderer.setClearColor(0xb1b1b1, 1.0);
+
+        
+        
 
 
 
@@ -233,8 +237,8 @@
 
             scene.add(makePole1(-650, -10, 130));
             scene.add(makePole1(-650, -25, 130));
-            
-            scene.add(makePoleBack(-650,100,-130));
+
+            scene.add(makePoleBack(-650, 100, -130));
 
 
 
@@ -331,27 +335,27 @@
         }
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-//        targetList.push(makeChair);
-//        targetList.push(makeExChair);
-//        targetList.push(makeAccessibleChair);
-//
-//        //1マウス座標の取得
-//        document.addEventListener('mousemove', function(e) {
-//            var rect = e.target.getBoundingClientRect();
-//
-//
-//            //2WebGLの座標系に変換
-//
-//            mouse.x = (e.clientX - rect.left) / width * 2 - 1;
-//            mouse.y = (e.clientY - rect.top) / height * -1 * 2 + 1;
-//
-//        });
-//
+        //        targetList.push(makeChair);
+        //        targetList.push(makeExChair);
+        //        targetList.push(makeAccessibleChair);
+        //
+        //        //1マウス座標の取得
+        //        document.addEventListener('mousemove', function(e) {
+        //            var rect = e.target.getBoundingClientRect();
+        //
+        //
+        //            //2WebGLの座標系に変換
+        //
+        //            mouse.x = (e.clientX - rect.left) / width * 2 - 1;
+        //            mouse.y = (e.clientY - rect.top) / height * -1 * 2 + 1;
+        //
+        //        });
+        //
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -1467,8 +1471,8 @@
 
         //非常口
 
-        
-        
+
+
         //上手
 
         var imaxEmergency1 = new THREE.TextureLoader();
@@ -1538,7 +1542,7 @@
             return poleGroup1;
 
         }
-        
+
         function makePoleBack(x, y, z) {
             var poleGroup1 = new THREE.Group();
             poleGroup1.add(makePoleparts1(1, 1, 250, 64, 1, false, 0, 6.3));
@@ -1579,43 +1583,40 @@
         //        
         //
         ////オブジェクトを選択したい！！！何故できない！？
-        function onMouseMove(e){
-            
+        function onMouseMove(e) {
+
             var rect = e.target.getBoundingClientRect();
-            
+
             //スクリーン上のマウス位置を取得する
             var mouseX = e.clientX - rect.left;
             var mouseY = e.clientY - rect.top;
-            
+
             //取得したスクリーン座標を-1〜1に正規化する（WebGLは-1〜1で座標が表現される)
-            mouseX = (mouseX/window.innerWidth) * 2 - 1;
-            mouseY = -(mouseY/window.innerHeight) * 2 + 1;
-            
+            mouseX = (mouseX / window.innerWidth) * 2 - 1;
+            mouseY = -(mouseY / window.innerHeight) * 2 + 1;
+
             //マウスの位置ベクトル
-            var pos = new THREE.Vector3(mouseX,mouseY,1);
-            
+            var pos = new THREE.Vector3(mouseX, mouseY, 1);
+
             //posはスクリーン座標系なのでオブジェクトの座標系に変換
             //オブジェクト座標系は今表示しているカメラからの視点なので第二引数にカメラオブジェクトを渡す。
             //new THREE.Project.unprojectVector(pos,camera);↓最新版では下のような書き方になるらしい）
-            
+
             pos.unproject(camera);
             //始点、向きベクトルを渡してレイを作成
-            
-            var ray = new THREE.raycaster(camera.position,pos.sub(camera.position).normalize());
-            
+
+            var ray = new THREE.raycaster(camera.position, pos.sub(camera.position).normalize());
+
             //交差判定
             //引数は取得対象となるMeshの配列を渡す。
             var objs = ray.intersectObjects(scene.children);
-            
-            if(obj.length > 0){
+
+            if (obj.length > 0) {
                 //交差していたらobjsが1以上になるので、やりたいことをやる。
                 objs[0].object.position.x = 10;
             }
         }
-        
-        
-        
-        
+
     </script>
 
 
