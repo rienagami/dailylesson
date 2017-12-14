@@ -14,10 +14,11 @@
         }
 
         div#canvas-frame {
-            width: 100vw;
-            height: 100vh;
+            width: 1200px;
+            height: 700px;
             overflow: hidden;
         }
+
     </style>
 
 
@@ -62,14 +63,22 @@
 //seatDataTest.jsonを読み込む
         
         window.addEventListener("load", function() {
-            $.getJSON("seatDataTest.json", "backData.json",function(json) {
+            $.getJSON("seatDataTest.json",function(json) {
                 initThree(json);
                 initObject();
                 initCamera();
                 loop();
             });
+            
+            $.getJson("backData.json",function(json){
+                initThree(json);
+                initObject();
+                initCamera();
+                loop();
+            })
         });
         
+
         
 //        
 //         window.addEventListener("load", function() {
@@ -141,6 +150,9 @@
 
 
             scene = new THREE.Scene();
+            
+               scene.add(makeRoomBox(0,0,0));
+
 
             for (var i = 0; i < 6; i += 1) {
                 var seatData = json[i];
@@ -148,15 +160,18 @@
                 
             }
 
-            scene.add(new THREE.AmbientLight(0x505050));
-            
+//            scene.add(new THREE.AmbientLight(0x505050));
+//            scene.add(makeRoomBox(0,0,0));
             
             
             for (var i= 0; i <6; i+=1){
                 var backData = json[i];
                 scene.add(makeBackBox(backData.x, backData.y, backData.z));
             }
-
+            
+            
+            
+         
 
 
 
@@ -254,6 +269,18 @@
             return back;
         }
         
+        
+//劇場の箱
+        
+        var makeRoomBoxGeo = new THREE.BoxBufferGeometry(1500,800,1000);
+        var makeRoomBoxMtl = new THREE.MeshNormalMaterial();
+        
+        function makeRoomBox(x,y,z){
+            var room = new THREE.Mesh(makeRoomBoxGeo,makeRoomBoxMtl);
+            room.position.set(x,y,z);
+            side:0;
+            return room;
+        }
         
         
     </script>
